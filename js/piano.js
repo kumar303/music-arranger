@@ -4,6 +4,9 @@
 
 (function() {
 
+    window.piano = {};
+    var exports = window.piano;
+
     //
     // Setup keys!
     //
@@ -137,6 +140,44 @@
     };
     var notesShift = -12;
     var downKeys = {};
+
+    var noteNames = {
+        0: 'C',
+        1: 'C#',
+        2: 'D',
+        3: 'D#',
+        4: 'E',
+        5: 'F',
+        6: 'F#',
+        7: 'G',
+        8: 'G#',
+        9: 'A',
+        10: 'A#',
+        11: 'B',
+        12: 'C',
+    };
+
+    exports.noteName = function(noteNum) {
+      var shift;
+      if (noteNum < 0) {
+        shift = function(num) {
+          return num + 12;
+        }
+      } else {
+        shift = function(num) {
+          return num - 12;
+        }
+      }
+
+      var name;
+      while (true) {
+        name = noteNames[noteNum];
+        if (typeof name !== 'undefined') {
+          return name;
+        }
+        noteNum = shift(noteNum);
+      }
+    };
 
 
     //

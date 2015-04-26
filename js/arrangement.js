@@ -14,7 +14,7 @@
   $('#notes .elements').on('click', 'a', function() {
     currentLoop = parseInt($(this).data('loop'), 10);
     currentNote = parseInt($(this).data('note'), 10);
-    showNote(currentLoop, currentNote);
+    showChord(currentLoop, currentNote);
   });
 
   $(window).keydown(function(evt) {
@@ -34,7 +34,10 @@
 
   $('#piano').on('note-deselected.piano', function(evt, keyNumber, keyDiv) {
     manageNote(function(notes) {
-      notes.pop(notes.indexOf(keyNumber));
+      var index = notes.indexOf(keyNumber);
+      if (index > -1) {
+        notes.splice(index, 1);
+      }
     });
   });
 
@@ -50,8 +53,10 @@
       return;
     }
 
-    console.log('manage note');
-    callback(loops[currentLoop][currentNote].notes);
+    console.log('manage note', currentNote, 'for loop', currentLoop);
+    var notes = loops[currentLoop][currentNote].notes;
+    callback(notes);
+    updateNote(currentLoop, currentNote, notes);
   }
 
 
@@ -83,16 +88,35 @@
   }
 
 
-  function showNote(loopId, noteId) {
-    console.log('showing note', noteId, 'loop', loopId);
+  function showChord(loopId, noteId) {
+    console.log('showing chord', noteId, 'loop', loopId);
     $('#piano .keys .key').removeClass('pressed');
     var loop = loops[loopId];
     var info = loop[noteId];
+    updateNote(loopId, noteId, info.notes);
     // make info.notes into pressed
     info.notes.forEach(function(note) {
       console.log('showing key', note);
       $('#piano').find('[data-key='+note+']').addClass('pressed');
     });
+  }
+
+
+  function updateNote(loopId, noteId, notes) {
+    // Find the root note of the chord:
+    var lowest;
+    if (notes.length) {
+      lowest = Math.min.apply({}, notes);
+    } else {
+      lowest = 0; // C
+    }
+    var root = piano.noteName(lowest);
+
+    $('#notes .elements a' +
+      '[data-loop=' + loopId + ']' +
+      '[data-note=' + noteId + ']').text(root);
+
+    console.log('showing', root, 'for loop', loopId, 'note', noteId);
   }
 
 
