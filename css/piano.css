@@ -1,0 +1,131 @@
+/*! Copyright (c) 2013 - Peter Coles (mrcoles.com)
+ *  Licensed under the MIT license: http://mrcoles.com/media/mit-license.txt
+ */
+
+html,body,div,span,h1,p {
+    margin:0;
+    padding:0;
+}
+
+html {
+    background: #fff;
+    font: normal 14px/24px futura, Helvetica, Arial, sans serif;
+    color: #999;
+}
+
+strong { font-weight: normal; }
+a { text-decoration: none; }
+
+html, body { height: 100%; }
+
+.clear {
+    clear: both;
+}
+
+#content {
+    min-height: 100%;
+    width: 782px;
+    margin: auto;
+    margin-top: 60px;
+    text-align: left;
+    overflow: hidden;
+}
+
+#content-inner {
+}
+
+#piano {
+}
+
+
+/** keys */
+
+#piano .keys {
+    /*width: 1144px;*/
+    /*width: 780px;*/
+    padding: 2px 0 0 2px;
+    overflow: hidden;
+    background: #000;
+    border-radius: 0 0 4px 4px;
+}
+
+.key {
+    float: left;
+    position: relative;
+    width: 50px;
+    height: 180px;
+    margin: 0 2px 2px 0;
+    background: #fff;
+    border-radius: 0 0 4px 4px;
+}
+.key.pressed,
+.key:active {
+    background: red;
+    /*box-shadow: inset 3px 2px 3px #999, inset -3px 2px 3px #999;*/
+}
+/*
+.key:active:before {
+    content: ' \25CF';
+    position: relative;
+    top: 80%;
+    left: 10%;
+    font-size: 60px;
+}
+*/
+.key.black {
+    width: 0;
+    margin: 0;
+    z-index: 2;
+}
+.key.black:after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -16px;
+    display: block;
+    width: 32px;
+    height: 117px;
+    background: #000;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 1px 1px 0 #555, 2px 2px 0 #555;
+}
+.key.black1:after {
+    left: -20px;
+}
+.key.black3:after {
+    left: -16px;
+}
+.key.black.pressed:after,
+.key.black:active:after {
+    background-color: red;
+}
+
+
+
+
+/* arrangement */
+
+.arrangement {
+    margin-top: 10px;
+}
+
+.arrangement a {
+    display: block;
+    float: left;
+    text-align: center;
+    padding: 10px 0 10px 0;
+    border: 2px solid black;
+    border-left: none;
+}
+
+.arrangement a:first-child {
+    border-left: 2px solid black;
+}
+
+#loops a {
+    width: 193px;
+}
+
+#notes a {
+    width: 95px;
+}
