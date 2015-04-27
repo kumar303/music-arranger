@@ -27,6 +27,10 @@
     showChord(currentLoop, currentNote);
   });
 
+  $('#chordmap .elements').on('click', 'a', function() {
+    showMappedChord(currentLoop, currentNote, $(this).text());
+  });
+
   $(window).keydown(function(evt) {
     var keyCode = evt.keyCode;
     // left and right arrows.
@@ -114,12 +118,12 @@
     // make info.notes into pressed
     info.notes.forEach(function(note) {
       console.log('showing key', note);
-      $('#piano .keys').find('[data-key='+note+']').addClass('pressed');
+      $('#piano .keys').find('[data-key=' + note + ']').addClass('pressed');
     });
   }
 
 
-  function updateNote(loopId, noteId, notes) {
+  function getRootNote(notes) {
     // Find the root note of the chord:
     var lowest;
     if (notes.length) {
@@ -127,7 +131,12 @@
     } else {
       lowest = 0; // C
     }
-    var root = piano.noteName(lowest);
+    return lowest;
+  }
+
+
+  function updateNote(loopId, noteId, notes) {
+    var root = piano.noteName(getRootNote(notes));
 
     console.log('showing', root, 'for loop', loopId, 'note', noteId);
 
@@ -151,6 +160,33 @@
       });
     });
     saveData();
+  }
+
+
+  var chordMap = {
+    'M': [4, 7],
+    'm': [3, 7],
+    'aug': [4, 8],
+    'dim': [3, 6],
+    'sus4': [5, 7],
+    'sus2': [2, 7],
+    '5': [7],
+    '6': [4, 7, 9],
+    'm6': [3, 7, 9],
+    '7': [4, 7, 10],
+    'M7': [4, 7, 11],
+    'm7': [3, 7, 10],
+  };
+
+
+  function showMappedChord(currentLoop, currentNote, chordName) {
+    var info = loops[currentLoop][currentNote];
+    var root = getRootNote(info.notes);
+    info.notes = [root];
+    chordMap[chordName].forEach(function(sumBy) {
+      info.notes.push(root + sumBy);
+    });
+    showChord(currentLoop, currentNote);
   }
 
 })();
