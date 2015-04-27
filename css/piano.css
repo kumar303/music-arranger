@@ -47,7 +47,7 @@ html, body { height: 100%; }
     float: left;
     position: relative;
     width: 50px;
-    height: 180px;
+    height: 140px;
     margin: 0 2px 2px 0;
     background: #fff;
     border-radius: 0 0 4px 4px;
@@ -78,7 +78,7 @@ html, body { height: 100%; }
     left: -16px;
     display: block;
     width: 32px;
-    height: 117px;
+    height: 90px;
     background: #000;
     border-radius: 0 0 4px 4px;
     box-shadow: 1px 1px 0 #555, 2px 2px 0 #555;
@@ -131,4 +131,8 @@ html, body { height: 100%; }
 
 #chordmap a {
     width: 63px;
+}
+
+#inversion a {
+    width: 388px;
 }

@@ -31,6 +31,10 @@
     showMappedChord(currentLoop, currentNote, $(this).text());
   });
 
+  $('#inversion .elements').on('click', 'a', function() {
+    invert(currentLoop, currentNote, $(this).data('inv'));
+  });
+
   $(window).keydown(function(evt) {
     var keyCode = evt.keyCode;
     // left and right arrows.
@@ -186,6 +190,35 @@
     chordMap[chordName].forEach(function(sumBy) {
       info.notes.push(root + sumBy);
     });
+    showChord(currentLoop, currentNote);
+  }
+
+
+  function invert(currentLoop, currentNote, direction) {
+    var info = loops[currentLoop][currentNote];
+    var notes = info.notes.slice(0);
+    var changedNote;
+
+    if (direction === 'up') {
+      console.log('inverting up');
+      var first = notes.shift();
+      changedNote = first + 12;
+      notes.push(changedNote);
+      if (changedNote > 12) {
+        console.log('inversion out of bounds');
+        return;
+      }
+    } else {
+      console.log('inverting down');
+      var last = notes.pop();
+      changedNote = last - 12;
+      notes.splice(0, 0, changedNote);
+      if (changedNote < -12) {
+        console.log('inversion out of bounds');
+        return;
+      }
+    }
+    info.notes = notes;
     showChord(currentLoop, currentNote);
   }
 
