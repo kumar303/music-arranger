@@ -3,7 +3,17 @@
 
   var currentLoop;
   var currentNote;
-  var loops = [];
+
+  //window.localStorage.clear();
+  var loops = window.localStorage.getItem('songData');
+  if (loops === null) {
+    loops = [];
+    console.log('creating song data');
+  } else {
+    loops = JSON.parse(loops);
+    console.log('loading song data');
+  }
+  saveData();
 
 
   $('#loops .elements').on('click', 'a', function() {
@@ -43,7 +53,15 @@
 
 
   // Startup
-  $('#loops a:first').trigger('click');
+  $('#piano').on('build-done.piano', function(evt) {
+    $('#loops a:first').trigger('click');
+  });
+
+
+  function saveData() {
+    window.localStorage.setItem('songData', JSON.stringify(loops));
+    console.log('saved changes to local storage');
+  }
 
 
   function manageNote(callback) {
@@ -62,11 +80,11 @@
 
   function showLoop(loopId) {
     var notes = loops[loopId];
+    console.log('showing loop', loopId, 'items:', notes && notes.length);
     if (!notes) {
       createLoop(loopId);
       return showLoop(loopId);
     }
-    console.log('showing loop', loopId);
 
     var container = $('#notes .elements');
     container.empty();
@@ -91,13 +109,12 @@
   function showChord(loopId, noteId) {
     console.log('showing chord', noteId, 'loop', loopId);
     $('#piano .keys .key').removeClass('pressed');
-    var loop = loops[loopId];
-    var info = loop[noteId];
+    var info = loops[loopId][noteId];
     updateNote(loopId, noteId, info.notes);
     // make info.notes into pressed
     info.notes.forEach(function(note) {
       console.log('showing key', note);
-      $('#piano').find('[data-key='+note+']').addClass('pressed');
+      $('#piano .keys').find('[data-key='+note+']').addClass('pressed');
     });
   }
 
@@ -112,11 +129,13 @@
     }
     var root = piano.noteName(lowest);
 
+    console.log('showing', root, 'for loop', loopId, 'note', noteId);
+
     $('#notes .elements a' +
       '[data-loop=' + loopId + ']' +
       '[data-note=' + noteId + ']').text(root);
-
-    console.log('showing', root, 'for loop', loopId, 'note', noteId);
+    loops[loopId][noteId].name = root;
+    saveData();
   }
 
 
@@ -131,6 +150,7 @@
         notes: [],
       });
     });
+    saveData();
   }
 
 })();
