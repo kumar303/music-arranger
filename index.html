@@ -1,35 +1,32 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset=utf-8>
-        <title>Music Arranger</title>
-        <link rel="stylesheet" type="text/css" href="css/piano.css" />
-    </head>
-    <body>
-        <div id="content">
-            <div id="content-inner">
-                <div id="piano">
-                  <div class="clear"></div>
-                </div>
-                <div class="arrangement" id="loops">
-                  <div class="elements">
-                    <a data-loop="0" href="#">Loop 1</a>
-                    <a data-loop="1" href="#">Loop 2</a>
-                    <a data-loop="2" href="#">Loop 3</a>
-                    <a data-loop="3" href="#">Loop 4</a>
-                  </div>
-                  <div class="clear"></div>
-                </div>
-                <div class="arrangement" id="notes">
-                  <div class="elements"></div>
-                  <div class="clear"></div>
-                </div>
-            </div>
+  <head>
+    <meta charset=utf-8>
+    <title>Music Arranger</title>
+    <link rel="stylesheet" type="text/css" href="css/piano.css" />
+  </head>
+  <body>
+    <div id="content">
+      <div id="piano">
+        <div class="clear"></div>
+      </div>
+      <div class="arrangement" id="loops">
+        <div class="elements">
+          <a data-loop="0" href="#">Loop 1</a>
+          <a data-loop="1" href="#">Loop 2</a>
+          <a data-loop="2" href="#">Loop 3</a>
+          <a data-loop="3" href="#">Loop 4</a>
         </div>
-        <script src="js/jquery-1.7.1.min.js"></script>
-        <script src="js/piano.js"></script>
-        <script src="js/arrangement.js"></script>
-
-    </body>
+        <div class="clear"></div>
+      </div>
+      <div class="arrangement" id="notes">
+        <div class="elements"></div>
+        <div class="clear"></div>
+      </div>
+      <div id="circle"></div>
+    </div>
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <script src="js/piano.js"></script>
+    <script src="js/arrangement.js"></script>
+  </body>
 </html>
-
