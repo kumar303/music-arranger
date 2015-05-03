@@ -3,7 +3,7 @@
 
   var songData = getSavedData();
   var currentPart = 0;
-  var currentNote;
+  var currentNote = 0;
 
   if (!songData.parts) {
     songData.parts = [];
@@ -13,13 +13,18 @@
 
 
   $('select#part').on('change', function() {
-    currentPart = parseInt($(this).val(), 10);
+    currentPart = parseInt($(this).val(), 10) || 0;
+    currentNote = 0;
     showPart(currentPart);
   });
 
   $('#notes .elements').on('click', 'a', function() {
     currentNote = parseInt($(this).data('note'), 10);
-    showChord(currentPart, currentNote);
+    if (!songData.parts[currentPart][currentNote].name) {
+      createNote();
+    } else {
+      showChord(currentPart, currentNote);
+    }
   });
 
   $('button.inverter').on('click', function() {
@@ -43,11 +48,7 @@
   });
 
   $('#piano').on('note-selected.piano', function(evt, keyNumber, keyDiv) {
-    manageNote(function(notes) {
-      var selectedChord = $('#chord-select').val();
-      makeMappedChord(currentPart, currentNote, selectedChord,
-                      {root: keyNumber});
-    });
+    createNote(keyNumber);
   });
 
   $('#piano').on('note-deselected.piano', function(evt, keyNumber, keyDiv) {
@@ -124,13 +125,25 @@
   }
 
 
-  function manageNote(callback) {
-    if (typeof currentPart === 'undefined' ||
-        typeof currentNote === 'undefined') {
-      console.log('cannot manage note; no current part/note');
-      return;
+  function createNote(keyNumber) {
+    if (!keyNumber) {
+      keyNumber = -12;  // C
     }
+    manageNote(function(notes) {
+      var selectedChord = $('#chord-select').val();
+      makeMappedChord(currentPart, currentNote, selectedChord,
+                      {root: keyNumber});
+    });
+  }
 
+
+  function manageNote(callback) {
+    if (!songData.parts[currentPart]) {
+      songData.parts[currentPart] = [];
+    }
+    if (!songData.parts[currentPart][currentNote]) {
+      songData.parts[currentPart][currentNote] = {};
+    }
     console.log('manage note', currentNote, 'for part', currentPart);
     var notes = songData.parts[currentPart][currentNote].notes;
     callback(notes);
@@ -162,7 +175,7 @@
       container.append(a);
     });
 
-    first.trigger('click');
+    showChord(currentPart, currentNote);
   }
 
 
@@ -207,7 +220,7 @@
   function createPart(partId) {
     console.log('creating part', partId);
     songData.parts[partId] = [];
-    var notes = ['C', false, false, false, false, false, false, false];
+    var notes = [false, false, false, false, false, false, false, false];
     notes.forEach(function(name, index) {
       songData.parts[partId].push({
         name: name,
@@ -215,6 +228,7 @@
         notes: [],
       });
     });
+    createNote();
     saveData();
   }
 
