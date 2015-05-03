@@ -59,6 +59,33 @@
     });
   });
 
+  $('button#export').on('click', function() {
+    //console.log(loops);
+    loops.forEach(function(loop, loopNum) {
+      var roots = [];
+      var allNotes = [];
+      loop.forEach(function(seq) {
+        if (!seq.notes.length) {
+          return;
+        }
+        roots.push(seq.name);
+        var namedNotes = seq.notes.map(piano.noteName);
+        allNotes.push(namedNotes.join(' '));
+      });
+
+      if (!roots.length) {
+        return;
+      }
+
+      //window.prompt(
+      //    'Copy:',
+      //    'PART ' + (loopNum + 1) + ' ROOTS: ' + roots.join(' >>> '));
+      window.prompt(
+          'Copy:',
+          'PART ' + (loopNum + 1) + ' CHORDS: ' + allNotes.join(' >>> '));
+    });
+  });
+
 
   // Startup
   $('#piano').on('build-done.piano', function(evt) {
