@@ -1,19 +1,15 @@
 (function() {
   "use strict";
 
+  var songData = getSavedData();
   var currentPart = 0;
   var currentNote;
 
-  //window.localStorage.clear();
-  var parts = window.localStorage.getItem('songData');
-  if (parts === null) {
-    parts = [];
+  if (!songData.parts) {
+    songData.parts = [];
     console.log('creating song data');
-  } else {
-    parts = JSON.parse(parts);
-    console.log('loading song data');
+    saveData();
   }
-  saveData();
 
 
   $('select#part').on('change', function() {
@@ -64,7 +60,7 @@
   });
 
   $('button#export').on('click', function() {
-    parts.forEach(function(part, partNum) {
+    songData.parts.forEach(function(part, partNum) {
       var chords = [];
 
       part.forEach(function(seq) {
@@ -97,7 +93,7 @@
 
   $('button#clear').on('click', function() {
     if (confirm('Delete all data?')) {
-      parts = [];
+      songData = {};
       saveData();
       window.location.reload();
     };
@@ -112,8 +108,19 @@
 
 
   function saveData() {
-    window.localStorage.setItem('songData', JSON.stringify(parts));
+    window.localStorage.setItem('songData', JSON.stringify(songData));
     console.log('saved changes to local storage');
+  }
+
+
+  function getSavedData() {
+    var data = window.localStorage.getItem('songData');
+    if (!data) {
+      data = {};
+    } else {
+      data = JSON.parse(data);
+    }
+    return data;
   }
 
 
@@ -125,14 +132,14 @@
     }
 
     console.log('manage note', currentNote, 'for part', currentPart);
-    var notes = parts[currentPart][currentNote].notes;
+    var notes = songData.parts[currentPart][currentNote].notes;
     callback(notes);
     showChord(currentPart, currentNote);
   }
 
 
   function showPart(partId) {
-    var notes = parts[partId];
+    var notes = songData.parts[partId];
     console.log('showing part', partId, 'items:', notes && notes.length);
     if (!notes) {
       createPart(partId);
@@ -162,7 +169,7 @@
   function showChord(partId, noteId) {
     console.log('showing chord', noteId, 'part', partId);
     $('#piano .keys .key').removeClass('pressed');
-    var info = parts[partId][noteId];
+    var info = songData.parts[partId][noteId];
     updateNote(partId, noteId, info.notes);
     // make info.notes into pressed
     info.notes.forEach(function(note) {
@@ -192,17 +199,17 @@
     $('#notes .elements a' +
       '[data-part=' + partId + ']' +
       '[data-note=' + noteId + ']').text(root);
-    parts[partId][noteId].name = root;
+    songData.parts[partId][noteId].name = root;
     saveData();
   }
 
 
   function createPart(partId) {
     console.log('creating part', partId);
-    parts[partId] = [];
+    songData.parts[partId] = [];
     var notes = ['C', false, false, false, false, false, false, false];
     notes.forEach(function(name, index) {
-      parts[partId].push({
+      songData.parts[partId].push({
         name: name,
         id: index,
         notes: [],
@@ -231,7 +238,7 @@
 
   function makeMappedChord(currentPart, currentNote, chordName, opt) {
     opt = opt || {root: undefined};
-    var info = parts[currentPart][currentNote];
+    var info = songData.parts[currentPart][currentNote];
     if (opt.root === undefined) {
       opt.root = getRootNote(info.notes);
     }
@@ -244,7 +251,7 @@
 
 
   function invert(currentPart, currentNote, direction) {
-    var info = parts[currentPart][currentNote];
+    var info = songData.parts[currentPart][currentNote];
     var notes = info.notes.slice(0);
     var changedNote;
 
