@@ -7,7 +7,7 @@ html,body,div,span,h1,p {
 html {
     background: #fff;
     font: normal 14px/24px futura, Helvetica, Arial, sans serif;
-    color: #999;
+    color: #000;
 }
 
 strong { font-weight: normal; }
@@ -16,9 +16,13 @@ a { text-decoration: none; }
 html, body { height: 100%; }
 
 button {
+    cursor: pointer;
+    border-radius: 6px 6px 6px 6px;
+}
+
+button, select {
     font-size: 1em;
     padding: 0.2em;
-    text-align: center;
     text-shadow: 0pt 1px 1px rgba(255, 255, 255, 0.75);
     background-color: rgb(245, 245, 245);
     background-image: -moz-linear-gradient(center top , rgb(255, 255, 255), rgb(230, 230, 230));
@@ -26,8 +30,7 @@ button {
     border-width: 1px;
     border-style: solid;
     border-color: rgb(204, 204, 204) rgb(204, 204, 204) rgb(179, 179, 179);
-    border-radius: 6px 6px 6px 6px;
-    cursor: pointer;
+    text-align: center;
 }
 
 .clear {
