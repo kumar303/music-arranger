@@ -60,29 +60,34 @@
   });
 
   $('button#export').on('click', function() {
-    //console.log(loops);
     loops.forEach(function(loop, loopNum) {
-      var roots = [];
-      var allNotes = [];
+      var chords = [];
+
       loop.forEach(function(seq) {
         if (!seq.notes.length) {
           return;
         }
-        roots.push(seq.name);
-        var namedNotes = seq.notes.map(piano.noteName);
-        allNotes.push(namedNotes.join(' '));
+        var isRoot = true;
+
+        function getName(note) {
+          var name = piano.noteName(note);
+          if (isRoot) {
+            name = '[' + name + ']';
+            isRoot = false;
+          }
+          return name;
+        };
+
+        chords.push(seq.notes.map(getName).join(' '));
       });
 
-      if (!roots.length) {
+      if (!chords.length) {
         return;
       }
 
-      //window.prompt(
-      //    'Copy:',
-      //    'PART ' + (loopNum + 1) + ' ROOTS: ' + roots.join(' >>> '));
       window.prompt(
           'Copy:',
-          'PART ' + (loopNum + 1) + ' CHORDS: ' + allNotes.join(' >>> '));
+          'PART ' + (loopNum + 1) + ' CHORDS: ' + chords.join(' >>> '));
     });
   });
 
