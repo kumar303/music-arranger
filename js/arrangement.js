@@ -21,6 +21,11 @@
     showLoop(currentLoop);
   });
 
+  $('select#part').on('change', function() {
+    currentLoop = parseInt($(this).val(), 10);
+    showLoop(currentLoop);
+  });
+
   $('#notes .elements').on('click', 'a', function() {
     currentLoop = parseInt($(this).data('loop'), 10);
     currentNote = parseInt($(this).data('note'), 10);
@@ -107,7 +112,8 @@
 
   // Startup
   $('#piano').on('build-done.piano', function(evt) {
-    $('#loops a:first').trigger('click');
+    currentLoop = parseInt($('select#part').val(), 10);
+    showLoop(currentLoop);
   });
 
 
