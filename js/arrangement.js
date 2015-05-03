@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  var currentLoop;
+  var currentLoop = 0;
   var currentNote;
 
   //window.localStorage.clear();
@@ -16,18 +16,12 @@
   saveData();
 
 
-  $('#loops .elements').on('click', 'a', function() {
-    currentLoop = parseInt($(this).data('loop'), 10);
-    showLoop(currentLoop);
-  });
-
   $('select#part').on('change', function() {
     currentLoop = parseInt($(this).val(), 10);
     showLoop(currentLoop);
   });
 
   $('#notes .elements').on('click', 'a', function() {
-    currentLoop = parseInt($(this).data('loop'), 10);
     currentNote = parseInt($(this).data('note'), 10);
     showChord(currentLoop, currentNote);
   });
