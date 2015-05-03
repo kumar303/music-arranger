@@ -91,6 +91,14 @@
     });
   });
 
+  $('button#clear').on('click', function() {
+    if (confirm('Delete all data?')) {
+      loops = [];
+      saveData();
+      window.location.reload();
+    };
+  });
+
 
   // Startup
   $('#piano').on('build-done.piano', function(evt) {
