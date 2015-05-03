@@ -10,6 +10,24 @@
       <div id="controls">
         <button id="export">Export Data</button>
         <button id="clear">Clear Data</button>
+        Chord:
+        <select id="chord-select">
+          <option value="">None</option>
+          <option value="M">Major</option>
+          <option value="m">Minor</option>
+          <option value="aug">Augmented</option>
+          <option value="dim">Diminished</option>
+          <option value="sus4">Sustained 4th</option>
+          <option value="sus2">Sustained 2nd</option>
+          <option value="5">Fifth</option>
+          <option value="6">Sixth</option>
+          <option value="m6">Minor 6th</option>
+          <option value="7">Seventh</option>
+          <option value="M7">Major 7th</option>
+          <option value="m7">Minor 7th</option>
+        </select>
+        <button class="inverter" data-inv="down">Invert Down</button>
+        <button class="inverter" data-inv="up">Invert Up</button>
       </div>
       <div id="piano">
         <div class="clear"></div>
@@ -25,30 +43,6 @@
       </div>
       <div class="arrangement" id="notes">
         <div class="elements"></div>
-        <div class="clear"></div>
-      </div>
-      <div class="arrangement" id="chordmap">
-        <div class="elements">
-          <a href="#">M</a>
-          <a href="#">m</a>
-          <a href="#">aug</a>
-          <a href="#">dim</a>
-          <a href="#">sus4</a>
-          <a href="#">sus2</a>
-          <a href="#">5</a>
-          <a href="#">6</a>
-          <a href="#">m6</a>
-          <a href="#">7</a>
-          <a href="#">M7</a>
-          <a href="#">m7</a>
-        </div>
-        <div class="clear"></div>
-      </div>
-      <div class="arrangement" id="inversion">
-        <div class="elements">
-          <a data-inv="down" href="#">invert down</a>
-          <a data-inv="up" href="#">invert up</a>
-        </div>
         <div class="clear"></div>
       </div>
       <div id="circle"></div>

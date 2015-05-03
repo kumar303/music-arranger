@@ -147,11 +147,3 @@ button {
     background: transparent url(circle_of_fifths.jpg) no-repeat center center;
     height: 400px;
 }
-
-#chordmap a {
-    width: 63px;
-}
-
-#inversion a {
-    width: 388px;
-}

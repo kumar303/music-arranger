@@ -27,11 +27,7 @@
     showChord(currentLoop, currentNote);
   });
 
-  $('#chordmap .elements').on('click', 'a', function() {
-    showMappedChord(currentLoop, currentNote, $(this).text());
-  });
-
-  $('#inversion .elements').on('click', 'a', function() {
+  $('button.inverter').on('click', function() {
     invert(currentLoop, currentNote, $(this).data('inv'));
   });
 
@@ -44,9 +40,18 @@
     }
   });
 
+  $('#chord-select').on('change', function(evt) {
+    var selectedChord = $(this).val();
+    manageNote(function(notes) {
+      makeMappedChord(currentLoop, currentNote, selectedChord);
+    });
+  });
+
   $('#piano').on('note-selected.piano', function(evt, keyNumber, keyDiv) {
     manageNote(function(notes) {
-      notes.push(keyNumber);
+      var selectedChord = $('#chord-select').val();
+      makeMappedChord(currentLoop, currentNote, selectedChord,
+                      {root: keyNumber});
     });
   });
 
@@ -122,7 +127,7 @@
     console.log('manage note', currentNote, 'for loop', currentLoop);
     var notes = loops[currentLoop][currentNote].notes;
     callback(notes);
-    updateNote(currentLoop, currentNote, notes);
+    showChord(currentLoop, currentNote);
   }
 
 
@@ -208,6 +213,7 @@
 
 
   var chordMap = {
+    '': [],  // no chord
     'M': [4, 7],
     'm': [3, 7],
     'aug': [4, 8],
@@ -223,14 +229,17 @@
   };
 
 
-  function showMappedChord(currentLoop, currentNote, chordName) {
+  function makeMappedChord(currentLoop, currentNote, chordName, opt) {
+    opt = opt || {root: undefined};
     var info = loops[currentLoop][currentNote];
-    var root = getRootNote(info.notes);
-    info.notes = [root];
+    if (opt.root === undefined) {
+      opt.root = getRootNote(info.notes);
+    }
+    console.log('making chord from root', piano.noteName(opt.root));
+    info.notes = [opt.root];
     chordMap[chordName].forEach(function(sumBy) {
-      info.notes.push(root + sumBy);
+      info.notes.push(opt.root + sumBy);
     });
-    showChord(currentLoop, currentNote);
   }
 
 
