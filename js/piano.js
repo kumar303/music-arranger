@@ -63,15 +63,12 @@
     }
 
     var i = -12;
-    var max = 14
-    // delayed for-loop to stop browser from crashing :'(
-    // go slower on Chrome...
-    var addDelay = /Chrome/i.test(navigator.userAgent) ? 80 : 0;
+    var max = 14;
 
     (function go() {
       addKey(i + notesOffset);
       if (++i < max) {
-        window.setTimeout(go, addDelay);
+        window.setTimeout(go, 0);
       } else {
         buildingPiano = false;
         $keys.trigger('build-done.piano');
