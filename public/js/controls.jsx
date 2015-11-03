@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset=utf-8>
-    <title>Music Arranger</title>
-    <link rel="stylesheet" type="text/css" href="css/piano.css" />
-  </head>
-  <body>
-    <div id="content">
+'use strict';
+
+var React = require('react');
+
+module.exports = React.createClass({
+
+  displayName: 'Controls',
+
+  render () {
+    return (
       <div id="controls">
         <select id="part">
           <option value="0">Part 1</option>
@@ -32,20 +33,10 @@
           <option value="M7">Major 7th</option>
           <option value="m7">Minor 7th</option>
         </select>
-        <button class="inverter" data-inv="down">Invert Down</button>
-        <button class="inverter" data-inv="up">Invert Up</button>
+        <button className="inverter" data-inv="down">Invert Down</button>
+        <button className="inverter" data-inv="up">Invert Up</button>
       </div>
-      <div id="piano">
-        <div class="clear"></div>
-      </div>
-      <div class="arrangement" id="notes">
-        <div class="elements"></div>
-        <div class="clear"></div>
-      </div>
-      <div id="circle"></div>
-    </div>
-    <script src="js/jquery-1.7.1.min.js"></script>
-    <script src="js/piano.js"></script>
-    <script src="js/arrangement.js"></script>
-  </body>
-</html>
+    );
+  },
+
+});

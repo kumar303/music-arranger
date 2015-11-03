@@ -6,9 +6,12 @@ which are made up of repeating grooves and only a few changes.
 
 A lot of code was lifted from [mrcoles.com/piano/](http://mrcoles.com/piano/).
 
-# Usage
+# Installation
 
-Clone the source and open `index.html` in a browser!
+    npm install
+    grunt start
+
+
 
 # License
 
