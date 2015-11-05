@@ -1,17 +1,21 @@
+var path = require('path');
+var webpack = require('webpack');
+
 var webpackConfig = require('../webpack.config.js');
+
 
 module.exports = {
   options: webpackConfig,
-  app: {
-    devtool: 'source-map',
-    stats: {
-      // Configure the console output
-      colors: true,
-      modules: true,
-      reasons: true
+  dev: {
+    // Default to all the options in webpackConfig
+  },
+  prod: {
+    output: {
+      path: path.join(__dirname, '../public/dist/'),
+      filename: '[name].bundle.min.js',
     },
-    failOnError: true, // don't report error to grunt if webpack find errors
-    watch: true, // use webpacks watcher
-    keepalive: true, // don't finish the grunt task
+    plugins: [
+      new webpack.optimize.UglifyJsPlugin({minimize: true}),
+    ],
   },
 };

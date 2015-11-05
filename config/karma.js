@@ -2,14 +2,14 @@ var grunt = require('grunt');
 
 module.exports = {
   options: {
-    logLevel: grunt.option('log-level') || 'ERROR',
+    logLevel: grunt.option('log-level') || 'INFO',
   },
   dev: {
-    configFile: 'karma.conf.js',
-    autoWatch: true
+    configFile: 'karma.config.js',
+    singleRun: false,
+    autoWatch: true,
   },
   run: {
-    configFile: 'karma.conf.js',
-    singleRun: true
+    configFile: 'karma.config.js',
   },
 };

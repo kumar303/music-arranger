@@ -1,12 +1,7 @@
-'use strict';
+import React, { Component } from 'react';
 
-var React = require('react');
-
-module.exports = React.createClass({
-
-  displayName: 'Controls',
-
-  render () {
+export default class Controls extends Component {
+  render() {
     return (
       <div id="controls">
         <select id="part">
@@ -17,10 +12,10 @@ module.exports = React.createClass({
         </select>
         <button id="export">Export Data</button>
         <button id="clear">Clear Data</button>
-        Chord:
+        <span>Chord:</span>
         <select id="chord-select">
           <option value="">None</option>
-          <option selected value="M">Major</option>
+          <option value="M">Major</option>
           <option value="m">Minor</option>
           <option value="aug">Augmented</option>
           <option value="dim">Diminished</option>
@@ -37,6 +32,5 @@ module.exports = React.createClass({
         <button className="inverter" data-inv="up">Invert Up</button>
       </div>
     );
-  },
-
-});
+  }
+}

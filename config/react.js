@@ -5,7 +5,7 @@ module.exports = {
       cwd: 'js',
       src: ['**/*.jsx'],
       dest: 'public/js/components/',
-      ext: '.js'
-    }]
-  }
+      ext: '.js',
+    }],
+  },
 };

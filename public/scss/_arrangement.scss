@@ -1,0 +1,17 @@
+
+.arrangement {
+    margin-top: 5px;
+}
+
+.arrangement a {
+    display: block;
+    float: left;
+    text-align: center;
+    padding: 5px 0 5px 0;
+    border: 2px solid black;
+    border-left: none;
+}
+
+.arrangement a:first-child {
+    border-left: 2px solid black;
+}
