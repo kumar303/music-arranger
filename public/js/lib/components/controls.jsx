@@ -1,6 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class Controls extends Component {
+import * as appControlsActions from 'lib/actions/app-controls';
+
+
+export class Controls extends Component {
+
+  static propTypes = {
+    appControls: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.boundAppControls = bindActionCreators(appControlsActions,
+                                               props.dispatch);
+  }
+
+  changeChordType(event) {
+    event.preventDefault();
+    this.boundAppControls.setChordType(event.currentTarget.value);
+  }
+
   render() {
     return (
       <div id="controls">
@@ -13,7 +35,8 @@ export default class Controls extends Component {
         <button id="export">Export Data</button>
         <button id="clear">Clear Data</button>
         <span>Chord:</span>
-        <select id="chord-select">
+        <select id="chord-select" value={this.props.appControls.chordType}
+            onChange={(...args) => this.changeChordType(...args)}>
           <option value="">None</option>
           <option value="M">Major</option>
           <option value="m">Minor</option>
@@ -34,3 +57,12 @@ export default class Controls extends Component {
     );
   }
 }
+
+
+function select(state) {
+  return {
+    appControls: state.appControls,
+  };
+}
+
+export default connect(select)(Controls);
