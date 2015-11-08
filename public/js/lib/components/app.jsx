@@ -28,9 +28,9 @@ export class App extends Component {
     }
     return (
       <div id="content">
-        <Controls />
-        <Piano />
-        <Arrangement />
+        <Controls/>
+        <Piano/>
+        <Arrangement/>
         <div id="circle"></div>
       </div>
     );
