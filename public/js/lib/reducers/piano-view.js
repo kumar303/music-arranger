@@ -13,47 +13,16 @@ export default function pianoView(state, action) {
     case actionTypes.SET_CHORD_TYPE:
       return Object.assign({}, state, {
         chordType: action.chordType,
-        chordNotes: makeMappedChord({
-          root: state.chordRoot,
-          chordType: action.chordType,
-        }),
       });
     case actionTypes.TOUCH_NOTE:
       return Object.assign({}, state, {
         chordRoot: action.note,
-        chordNotes: makeMappedChord({
-          root: action.note,
-          chordType: state.chordType,
-        }),
+      });
+    case actionTypes.SET_CHORD_NOTES:
+      return Object.assign({}, state, {
+        chordNotes: action.chordNotes,
       });
     default:
       return state || initialPianoViewState;
   }
-}
-
-
-const CHORD_MAP = {
-  '': [],  // no chord
-  'M': [4, 7],
-  'm': [3, 7],
-  'aug': [4, 8],
-  'dim': [3, 6],
-  'sus4': [5, 7],
-  'sus2': [2, 7],
-  '5': [7],
-  '6': [4, 7, 9],
-  'm6': [3, 7, 9],
-  '7': [4, 7, 10],
-  'M7': [4, 7, 11],
-  'm7': [3, 7, 10],
-};
-
-
-function makeMappedChord({root, chordType='M'}) {
-  let mappedChord = {};
-  mappedChord[root] = true;
-  CHORD_MAP[chordType].forEach(function(sumBy) {
-    mappedChord[root + sumBy] = true;
-  });
-  return mappedChord;
 }
