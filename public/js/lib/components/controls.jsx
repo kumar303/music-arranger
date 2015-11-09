@@ -3,18 +3,22 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import * as appControlsActions from 'lib/actions/app-controls';
+import * as arrangementActions from 'lib/actions/arrangement';
 
 
 export class Controls extends Component {
 
   static propTypes = {
     appControls: PropTypes.object.isRequired,
+    arrangement: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.boundAppControls = bindActionCreators(appControlsActions,
+                                               props.dispatch);
+    this.boundArrangement = bindActionCreators(arrangementActions,
                                                props.dispatch);
   }
 
@@ -23,14 +27,20 @@ export class Controls extends Component {
     this.boundAppControls.setChordType(event.currentTarget.value);
   }
 
+  changePart(event) {
+    event.preventDefault();
+    this.boundArrangement.setCurrentPart(parseInt(event.currentTarget.value));
+  }
+
   render() {
     return (
       <div id="controls">
-        <select id="part">
-          <option value="0">Part 1</option>
-          <option value="1">Part 2</option>
-          <option value="2">Part 3</option>
-          <option value="3">Part 4</option>
+        <select id="part" value={this.props.arrangement.currentPart}
+            onChange={(...args) => this.changePart(...args)}>
+          <option value={0}>Part 1</option>
+          <option value={1}>Part 2</option>
+          <option value={2}>Part 3</option>
+          <option value={3}>Part 4</option>
         </select>
         <button id="export">Export Data</button>
         <button id="clear">Clear Data</button>
@@ -62,6 +72,7 @@ export class Controls extends Component {
 function select(state) {
   return {
     appControls: state.appControls,
+    arrangement: state.arrangement,
   };
 }
 
