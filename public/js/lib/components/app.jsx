@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import * as appActions from 'lib/actions/app-actions';
+import * as appActions from 'lib/actions/app';
 
 import Arrangement from 'lib/components/arrangement';
 import Controls from 'lib/components/controls';
