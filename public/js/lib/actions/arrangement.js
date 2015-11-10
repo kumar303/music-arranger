@@ -32,8 +32,12 @@ function dispatchCurrentChords(dispatch, state) {
 
   let chordRoot = position.chordRoot;
   let chordNotes = position.chordNotes;
+  let chordType = position.chordType || state.controls.chordType;
 
   if (typeof chordRoot === 'undefined') {
+    // When selecting song parts that don't exist yet,
+    // this fills in a default C chord just to indicate
+    // that action created a new part.
     chordRoot = -12;  // C
     let chordNotesAction = setChordNotes({
       root: chordRoot,
@@ -49,5 +53,9 @@ function dispatchCurrentChords(dispatch, state) {
   dispatch({
     type: actionTypes.SET_CHORD_NOTES,
     chordNotes: chordNotes,
+  });
+  dispatch({
+    type: actionTypes.SET_CHORD_TYPE,
+    chordType: chordType,
   });
 }

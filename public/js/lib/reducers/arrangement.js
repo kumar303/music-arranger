@@ -18,6 +18,12 @@ export default function arrangement(state, action) {
           chordRoot: action.note,
         }),
       });
+    case actionTypes.SET_CHORD_TYPE:
+      return Object.assign({}, state, {
+        parts: mergeNewPart(state, {
+          chordType: action.chordType,
+        }),
+      });
     case actionTypes.SET_CHORD_NOTES:
       return Object.assign({}, state, {
         parts: mergeNewPart(state, {
