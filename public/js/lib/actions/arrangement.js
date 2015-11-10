@@ -32,7 +32,6 @@ function dispatchCurrentChords(dispatch, state) {
 
   let chordRoot = position.chordRoot;
   let chordNotes = position.chordNotes;
-  let chordType = position.chordType || state.controls.chordType;
 
   if (typeof chordRoot === 'undefined') {
     // When selecting song parts that don't exist yet,
@@ -46,6 +45,11 @@ function dispatchCurrentChords(dispatch, state) {
     chordNotes = chordNotesAction.chordNotes;
   }
 
+  let chordType = (position.chordType !== undefined ?
+                   position.chordType : state.controls.chordType);
+  let chordInversion = (position.chordInversion !== undefined ?
+                        position.chordInversion : state.controls.chordInversion);
+
   dispatch({
     type: actionTypes.TOUCH_NOTE,
     note: chordRoot,
@@ -57,5 +61,9 @@ function dispatchCurrentChords(dispatch, state) {
   dispatch({
     type: actionTypes.SET_CHORD_TYPE,
     chordType: chordType,
+  });
+  dispatch({
+    type: actionTypes.SET_CHORD_INVERSION,
+    chordInversion: chordInversion,
   });
 }

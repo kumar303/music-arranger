@@ -32,6 +32,21 @@ export class Controls extends Component {
     this.boundArrangement.setCurrentPart(parseInt(event.currentTarget.value));
   }
 
+  invertDown(event) {
+    event.preventDefault();
+    this.boundControlActions.invertChord(-1);
+  }
+
+  invertUp(event) {
+    event.preventDefault();
+    this.boundControlActions.invertChord(1);
+  }
+
+  resetInversion(event) {
+    event.preventDefault();
+    this.boundControlActions.resetChordInversion();
+  }
+
   render() {
     return (
       <div id="controls">
@@ -61,8 +76,15 @@ export class Controls extends Component {
           <option value="M7">Major 7th</option>
           <option value="m7">Minor 7th</option>
         </select>
-        <button className="inverter" data-inv="down">Invert Down</button>
-        <button className="inverter" data-inv="up">Invert Up</button>
+        <button className="inverter" onClick={(e) => this.invertDown(e)}>
+          Invert Down
+        </button>
+        <button onClick={(e) => this.resetInversion(e)}>
+          {this.props.controls.chordInversion}
+        </button>
+        <button className="inverter" onClick={(e) => this.invertUp(e)}>
+          Invert Up
+        </button>
       </div>
     );
   }

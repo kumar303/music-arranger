@@ -4,7 +4,7 @@ import * as actionTypes from 'lib/constants/action-types';
 export const initialPianoViewState = {
   chordRoot: -12,
   chordType: 'M',
-  chordNotes: {},
+  chordNotes: [],
 };
 
 

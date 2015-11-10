@@ -30,6 +30,12 @@ export default function arrangement(state, action) {
           chordNotes: action.chordNotes,
         }),
       });
+    case actionTypes.SET_CHORD_INVERSION:
+      return Object.assign({}, state, {
+        parts: mergeNewPart(state, {
+          chordInversion: action.chordInversion,
+        }),
+      });
     case actionTypes.SET_CURRENT_PART:
       return Object.assign({}, state, {
         currentPosition: 0,

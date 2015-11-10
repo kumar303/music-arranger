@@ -19,7 +19,7 @@ export class Arrangement extends Component {
                                                props.dispatch);
   }
 
-  setChord(event, {position}) {
+  setPosition(event, position) {
     event.preventDefault();
     this.boundArrangement.setCurrentPosition(position);
   }
@@ -32,7 +32,7 @@ export class Arrangement extends Component {
     for (let position=0; position < 8; position++) {
       let chordData = data[position] || {};
       chords.push(
-        <a  onClick={(event) => this.setChord(event, {position: position})}
+        <a  onClick={(event) => this.setPosition(event, position)}
             href="#" key={position}>
           {typeof chordData.chordRoot !== 'undefined' ?
               noteName(chordData.chordRoot) : empty}

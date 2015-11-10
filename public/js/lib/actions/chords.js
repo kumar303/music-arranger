@@ -18,13 +18,13 @@ const CHORD_MAP = {
 
 
 export function setChordNotes({root, chordType='M'}) {
-  let mappedChord = {};
-  mappedChord[root] = true;
-  CHORD_MAP[chordType].forEach(function(sumBy) {
-    mappedChord[root + sumBy] = true;
+  let chordNotes = [];
+  chordNotes.push(root);
+  CHORD_MAP[chordType].forEach((sumBy) => {
+    chordNotes.push(root + sumBy);
   });
   return {
     type: actionTypes.SET_CHORD_NOTES,
-    chordNotes: mappedChord,
+    chordNotes: chordNotes,
   };
 }
