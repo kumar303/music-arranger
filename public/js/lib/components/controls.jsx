@@ -57,7 +57,11 @@ export class Controls extends Component {
           <option value={2}>Part 3</option>
           <option value={3}>Part 4</option>
         </select>
-        <button id="export">Export Data</button>
+        <button
+            onClick={() => this.boundArrangement.setExportedData()}
+            id="export">
+          Export Data
+        </button>
         <button id="clear">Clear Data</button>
         <span>Chord:</span>
         <select id="chord-select" value={this.props.controls.chordType}

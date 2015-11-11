@@ -2,6 +2,7 @@ import * as actionTypes from 'lib/constants/action-types';
 
 
 export const initialArrangementState = {
+  exportedData: null,
   currentPart: 0,
   currentPosition: 0,
   // Example:
@@ -12,6 +13,14 @@ export const initialArrangementState = {
 
 export default function arrangement(state, action) {
   switch (action.type) {
+    case actionTypes.SET_EXPORTED_DATA:
+      return Object.assign({}, state, {
+        exportedData: action.exportedData,
+      });
+    case actionTypes.CLEAR_EXPORTED_DATA:
+      return Object.assign({}, state, {
+        exportedData: initialArrangementState.exportedData,
+      });
     case actionTypes.TOUCH_NOTE:
       return Object.assign({}, state, {
         parts: mergeNewPart(state, {

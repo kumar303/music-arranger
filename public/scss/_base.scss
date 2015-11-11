@@ -1,6 +1,14 @@
-html,body,div,span,h1,p {
+html, body, div, span, h1, p {
     margin:0;
     padding:0;
+}
+
+html, body{
+    min-height: 100%;
+}
+
+body {
+    position: relative;
 }
 
 html {
@@ -9,10 +17,12 @@ html {
     color: #000;
 }
 
-strong { font-weight: normal; }
-a { text-decoration: none; }
-
-html, body { height: 100%; }
+strong {
+    font-weight: normal;
+}
+a {
+    text-decoration: none;
+}
 
 .clear {
     clear: both;

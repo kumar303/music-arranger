@@ -48,7 +48,8 @@ function dispatchCurrentChords(dispatch, state) {
   let chordType = (position.chordType !== undefined ?
                    position.chordType : state.controls.chordType);
   let chordInversion = (position.chordInversion !== undefined ?
-                        position.chordInversion : state.controls.chordInversion);
+                        position.chordInversion :
+                        state.controls.chordInversion);
 
   dispatch({
     type: actionTypes.TOUCH_NOTE,
@@ -66,4 +67,24 @@ function dispatchCurrentChords(dispatch, state) {
     type: actionTypes.SET_CHORD_INVERSION,
     chordInversion: chordInversion,
   });
+}
+
+
+export function clearExportedData() {
+  return {
+    type: actionTypes.CLEAR_EXPORTED_DATA,
+  };
+}
+
+
+export function setExportedData() {
+  return (dispatch, getState) => {
+    const state = getState();
+    dispatch({
+      type: actionTypes.SET_EXPORTED_DATA,
+      exportedData: Object.assign({}, {
+        parts: state.arrangement.parts,
+      }),
+    });
+  };
 }
