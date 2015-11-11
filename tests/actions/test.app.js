@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import * as actionTypes from 'lib/constants/action-types';
-import * as appActions from 'lib/actions/app-actions';
+import * as appActions from 'lib/actions/app';
 
 
 describe('appError', function() {
