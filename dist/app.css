@@ -434,11 +434,6 @@ a {
   overflow: hidden;
 }
 
-#circle {
-  background: transparent url(img/circle_of_fifths.jpg) no-repeat center center;
-  height: 400px;
-}
-
 button {
   cursor: pointer;
   border-radius: 0;

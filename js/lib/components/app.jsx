@@ -47,7 +47,6 @@ export class App extends Component {
         <Controls/>
         <Piano/>
         <Arrangement/>
-        <div id="circle"></div>
       </div>
     );
   }

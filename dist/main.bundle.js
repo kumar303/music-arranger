@@ -20898,8 +20898,7 @@
 	        addedComponents,
 	        _react2['default'].createElement(_libComponentsControls2['default'], null),
 	        _react2['default'].createElement(_libComponentsPiano2['default'], null),
-	        _react2['default'].createElement(_libComponentsArrangement2['default'], null),
-	        _react2['default'].createElement('div', { id: 'circle' })
+	        _react2['default'].createElement(_libComponentsArrangement2['default'], null)
 	      );
 	    }
 	  }]);
