@@ -1,0 +1,64 @@
+
+#piano {
+}
+
+
+#piano .keys {
+    /*width: 1144px;*/
+    /*width: 780px;*/
+    padding: 2px 0 0 2px;
+    overflow: hidden;
+    background: #000;
+    border-radius: 0 0 4px 4px;
+}
+
+.key {
+    float: left;
+    position: relative;
+    width: 50px;
+    height: 140px;
+    margin: 0 2px 2px 0;
+    background: #fff;
+    border-radius: 0 0 4px 4px;
+}
+.key.pressed,
+.key:active {
+    background: red;
+    /*box-shadow: inset 3px 2px 3px #999, inset -3px 2px 3px #999;*/
+}
+/*
+.key:active:before {
+    content: ' \25CF';
+    position: relative;
+    top: 80%;
+    left: 10%;
+    font-size: 60px;
+}
+*/
+.key.black {
+    width: 0;
+    margin: 0;
+    z-index: 2;
+}
+.key.black:after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -16px;
+    display: block;
+    width: 32px;
+    height: 90px;
+    background: #000;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 1px 1px 0 #555, 2px 2px 0 #555;
+}
+.key.black1:after {
+    left: -20px;
+}
+.key.black3:after {
+    left: -16px;
+}
+.key.black.pressed:after,
+.key.black:active:after {
+    background-color: red;
+}

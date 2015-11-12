@@ -1,7 +1,6 @@
-*.py[co]
-*.sw[po]
-*.egg-info
 .DS_Store
 *~
-*.mo
-*.db
+node_modules
+.grunt
+npm-debug.log
+public/dist/*

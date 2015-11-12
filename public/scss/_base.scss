@@ -1,0 +1,43 @@
+html, body, div, span, h1, p {
+    margin:0;
+    padding:0;
+}
+
+html, body{
+    min-height: 100%;
+}
+
+body {
+    position: relative;
+}
+
+html {
+    background: #fff;
+    font: normal 14px/24px futura, Helvetica, Arial, sans serif;
+    color: #000;
+}
+
+strong {
+    font-weight: normal;
+}
+a {
+    text-decoration: none;
+}
+
+.clear {
+    clear: both;
+}
+
+#content {
+    min-height: 100%;
+    width: 782px;
+    margin: auto;
+    margin-top: 2px;
+    text-align: left;
+    overflow: hidden;
+}
+
+#circle {
+    background: transparent url(img/circle_of_fifths.jpg) no-repeat center center;
+    height: 400px;
+}
