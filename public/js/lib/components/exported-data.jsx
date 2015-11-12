@@ -16,7 +16,7 @@ export default class ExportedData extends Component {
     part.forEach((data) => {
       chords.push(formatter(data));
     });
-    return 'PART ' + (index + 1) + ': ' + chords.join(' >>> ');
+    return (index + 1) + '. ' + chords.join(' >>> ');
   }
 
   formatData() {
