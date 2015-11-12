@@ -1,0 +1,40 @@
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+
+import * as storage from 'lib/util/state-storage';
+import rootReducer from './reducers';
+
+
+function logger({ getState }) {
+  return next => action => {
+    console.info('redux: dispatching', action);
+    const result = next(action);
+    console.log('redux: state after', getState());
+    return result;
+  };
+}
+
+const createStoreWithMiddleware = applyMiddleware(
+  thunk,
+  logger
+)(createStore);
+
+
+export function createReduxStore() {
+  const store = createStoreWithMiddleware(rootReducer, storage.restoreState());
+
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers
+    // See: https://github.com/rackt/react-redux/releases/tag/v2.0.0
+    module.hot.accept('lib/reducers', () => {
+      const nextRootReducer = require('lib/reducers');
+      store.replaceReducer(nextRootReducer);
+    });
+  }
+
+  store.subscribe(() => storage.saveState(store.getState()));
+
+  return store;
+}
+
+export default createReduxStore();
