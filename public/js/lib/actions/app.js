@@ -9,6 +9,13 @@ export function appError(error) {
 }
 
 
+export function resetState() {
+  return {
+    type: actionTypes.RESET_STATE,
+  };
+}
+
+
 export function showStatus({apiFetch=fetch} = {}) {
   return (dispatch) => apiFetch('http://olympia.dev:8000/',
                                 {headers: {accept: 'application/json'}})

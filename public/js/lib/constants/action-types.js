@@ -1,5 +1,6 @@
 export const APP_ERROR = 'APP_ERROR';
 export const CLEAR_EXPORTED_DATA = 'CLEAR_EXPORTED_DATA';
+export const RESET_STATE = 'RESET_STATE';
 export const SET_CHORD_INVERSION = 'SET_CHORD_INVERSION';
 export const SET_CHORD_NOTES = 'SET_CHORD_NOTES';
 export const SET_CHORD_TYPE = 'SET_CHORD_TYPE';

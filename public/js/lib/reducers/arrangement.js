@@ -13,6 +13,8 @@ export const initialArrangementState = {
 
 export default function arrangement(state, action) {
   switch (action.type) {
+    case actionTypes.RESET_STATE:
+      return initialArrangementState;
     case actionTypes.SET_EXPORTED_DATA:
       return Object.assign({}, state, {
         exportedData: action.exportedData,

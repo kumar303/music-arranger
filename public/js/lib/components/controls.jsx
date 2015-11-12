@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import * as appActions from 'lib/actions/app';
 import * as controlActions from 'lib/actions/controls';
 import * as arrangementActions from 'lib/actions/arrangement';
 
@@ -16,6 +17,8 @@ export class Controls extends Component {
 
   constructor(props) {
     super(props);
+    this.boundAppActions = bindActionCreators(appActions,
+                                              props.dispatch);
     this.boundControlActions = bindActionCreators(controlActions,
                                                   props.dispatch);
     this.boundArrangement = bindActionCreators(arrangementActions,
@@ -57,12 +60,12 @@ export class Controls extends Component {
           <option value={2}>Part 3</option>
           <option value={3}>Part 4</option>
         </select>
-        <button
-            onClick={() => this.boundArrangement.setExportedData()}
-            id="export">
+        <button onClick={() => this.boundArrangement.setExportedData()}>
           Export Data
         </button>
-        <button id="clear">Clear Data</button>
+        <button onClick={() => this.boundAppActions.resetState()}>
+          Clear Data
+        </button>
         <span>Chord:</span>
         <select id="chord-select" value={this.props.controls.chordType}
             onChange={(...args) => this.changeChordType(...args)}>

@@ -10,6 +10,8 @@ export const initialPianoViewState = {
 
 export default function pianoView(state, action) {
   switch (action.type) {
+    case actionTypes.RESET_STATE:
+      return initialPianoViewState;
     case actionTypes.SET_CHORD_TYPE:
       return Object.assign({}, state, {
         chordType: action.chordType,

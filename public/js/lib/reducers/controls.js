@@ -9,6 +9,8 @@ export const initialControlsState = {
 
 export default function controls(state, action) {
   switch (action.type) {
+    case actionTypes.RESET_STATE:
+      return initialControlsState;
     case actionTypes.SET_CHORD_INVERSION:
       return Object.assign({}, state, {
         chordInversion: action.chordInversion,
