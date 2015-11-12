@@ -1,14 +1,21 @@
-This is an HTML5 app to plan out musical arrangements.
+This is a web app that lets you plan out musical chord arrangements.
 
 It's pretty limited. It was designed for the arrangements
 that I like to [work on](https://soundcloud.com/dj_bylamplight)
-which are made up of only a few repeating parts with turn-arounds.
+which are made up of only a few repeating chords and maybe some turn-arounds.
+What I like about this approach is you can collaborate with other musicians
+around a loose structure.
 
-A lot of code was lifted from [mrcoles.com/piano/](http://mrcoles.com/piano/).
+# Launching the App
 
-# Installation
+You can use the app in your web browser from
+[kumar303.github.io/music-arranger/](http://kumar303.github.io/music-arranger/).
 
-You'll need [Node JS](https://nodejs.org/) for build management:
+# Developing the app
+
+If you want to work on the app locally, first clone the source.
+You'll need [Node JS](https://nodejs.org/) for build management.
+Run this within the source directory to install all dependencies:
 
     npm install
 
@@ -17,13 +24,14 @@ Install it globally like:
 
     npm install -g grunt
 
-## Developing on the app
+## Installation
 
 Install and compile the assets:
 
     grunt build
 
-Open `public/index.html` in a browser.
+You can now use your local copy of the app by opening
+`public/index.html` in a browser.
 
 You can keep this running in a shell to continuously rebuild the JS/CSS bundle
 anytime you edit a file:
@@ -50,6 +58,17 @@ edit React component code. It's pretty hot! Run it like this:
 Open:
 
     http://localhost:8080/webpack-dev-server/
+
+## Publishing To Github Pages
+
+To publish the app to Github Pages from the source, run this:
+
+    grunt gh-publish
+
+# Credits
+
+Some code (mostly piano styles) came from
+[mrcoles.com/piano/](http://mrcoles.com/piano/).
 
 # License
 

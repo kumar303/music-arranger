@@ -16,4 +16,6 @@ module.exports = function(grunt) {
                      ['karma:run', 'lint']);
   grunt.registerTask('watch-test', 'Watches files and runs tests',
                      ['karma:dev']);
+  grunt.registerTask('gh-publish', 'Publish source to Github Pages',
+                     ['build', 'gh-pages']);
 };
