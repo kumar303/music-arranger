@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import * as pianoActions from 'lib/actions/piano';
+import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
 
 const blackKeys = {
   1: 1,
@@ -53,7 +54,7 @@ export class PianoKey extends Component {
     if (inversion > 0) {
       var first = modifiedNotes.shift();
       changedNote = first + 12;
-      if (changedNote > 12) {
+      if (changedNote > PIANO_KEY_END) {
         console.log('inversion out of bounds');
         return notes;
       }
@@ -61,7 +62,7 @@ export class PianoKey extends Component {
     } else {
       var last = modifiedNotes.pop();
       changedNote = last - 12;
-      if (changedNote < -12) {
+      if (changedNote < PIANO_KEY_START) {
         console.log('inversion out of bounds');
         return notes;
       }
