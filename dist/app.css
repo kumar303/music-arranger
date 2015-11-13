@@ -409,7 +409,7 @@ body {
 
 html {
   background: #fff;
-  font: normal 14px/24px futura, Helvetica, Arial, sans serif;
+  font: normal 14px/24px Helvetica, Arial, sans-serif;
   color: #000;
 }
 
@@ -648,6 +648,10 @@ button.spinner:after {
   padding: 5px 0 5px 0;
   border: 2px solid black;
   border-left: none;
+}
+
+.arrangement a:link, .arrangement a:active, .arrangement a:visited, .arrangement a:hover {
+  color: #000;
 }
 
 .arrangement a:first-child {
