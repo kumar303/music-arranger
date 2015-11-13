@@ -1,6 +1,7 @@
 import * as actionTypes from 'lib/constants/action-types';
 
 import { setChordNotes } from './chords';
+import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
 
 
 export function setCurrentPart(partNum) {
@@ -35,9 +36,9 @@ function dispatchCurrentChords(dispatch, state) {
 
   if (typeof chordRoot === 'undefined') {
     // When selecting song parts that don't exist yet,
-    // this fills in a default C chord just to indicate
-    // that action created a new part.
-    chordRoot = -12;  // C
+    // this fills in a default chord just to indicate
+    // that the action created a new part.
+    chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
     let chordNotesAction = setChordNotes({
       root: chordRoot,
       chordType: state.pianoView.chordType,
@@ -87,4 +88,16 @@ export function setExportedData() {
       }),
     });
   };
+}
+
+
+function _defaultChordRoot(previousPosition) {
+  let root = null;
+  if (previousPosition) {
+    root = previousPosition.chordRoot + 2;
+  }
+  if (root === null || root > PIANO_KEY_END) {
+    root = PIANO_KEY_START;
+  }
+  return root;
 }
