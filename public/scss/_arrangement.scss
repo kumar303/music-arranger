@@ -10,6 +10,10 @@
     padding: 5px 0 5px 0;
     border: 2px solid black;
     border-left: none;
+
+    &:link, &:active, &:visited, &:hover {
+        color: #000;
+    }
 }
 
 .arrangement a:first-child {
