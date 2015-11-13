@@ -3,8 +3,6 @@ This is a web app that lets you plan out musical chord arrangements.
 It's pretty limited. It was designed for the arrangements
 that I like to [work on](https://soundcloud.com/dj_bylamplight)
 which are made up of only a few repeating chords and maybe some turn-arounds.
-What I like about this approach is you can collaborate with other musicians
-around a loose structure.
 
 [![Build Status](https://travis-ci.org/kumar303/music-arranger.svg?branch=master)](https://travis-ci.org/kumar303/music-arranger)
 
