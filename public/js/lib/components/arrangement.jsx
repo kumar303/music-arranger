@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { noteName } from 'lib/util/notes';
 import * as arrangementActions from 'lib/actions/arrangement';
+import ArrangementPart from 'lib/components/arrangement-part';
 
 
 export class Arrangement extends Component {
@@ -19,36 +19,25 @@ export class Arrangement extends Component {
                                                props.dispatch);
   }
 
-  setPosition(event, position) {
-    event.preventDefault();
-    this.boundArrangement.setCurrentPosition(position);
-  }
-
-  renderChords() {
-    const empty = <span>&nbsp;</span>;
-    let currentPart = this.props.arrangement.currentPart;
-    let chords = [];
-    let data = this.props.arrangement.parts[currentPart] || [];
-    for (let position=0; position < 8; position++) {
-      let chordData = data[position] || {};
-      chords.push(
-        <a  onClick={(event) => this.setPosition(event, position)}
-            href="#" key={position}>
-          {typeof chordData.chordRoot !== 'undefined' ?
-              noteName(chordData.chordRoot) : empty}
-        </a>
+  renderParts() {
+    var parts = [];
+    var partLength = this.props.arrangement.parts.length;
+    for (let partNum = 0; partNum < partLength + 1; partNum++) {
+      parts.push(
+        <ArrangementPart
+          key={partNum}
+          part={this.props.arrangement.parts[partNum] || []}
+          partNum={partNum}
+          setPosition={this.boundArrangement.setPosition} />
       );
     }
-    return chords;
+    return parts;
   }
 
   render() {
     return (
-      <div className="arrangement">
-        <div className="elements">
-          {this.renderChords()}
-        </div>
-        <div className="clear"></div>
+      <div>
+        {this.renderParts()}
       </div>
     );
   }

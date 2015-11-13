@@ -50,16 +50,25 @@ export class Controls extends Component {
     this.boundControlActions.resetChordInversion();
   }
 
+  renderPartSelector() {
+    var options = [];
+    this.props.arrangement.parts.forEach((data, partNum) => {
+      options.push(
+        <option key={partNum} value={partNum}>Part {partNum + 1}</option>
+      );
+    });
+    return (
+      <select value={this.props.arrangement.currentPart}
+          onChange={(...args) => this.changePart(...args)}>
+        {options}
+      </select>
+    );
+  }
+
   render() {
     return (
       <div id="controls">
-        <select id="part" value={this.props.arrangement.currentPart}
-            onChange={(...args) => this.changePart(...args)}>
-          <option value={0}>Part 1</option>
-          <option value={1}>Part 2</option>
-          <option value={2}>Part 3</option>
-          <option value={3}>Part 4</option>
-        </select>
+        {this.renderPartSelector()}
         <button onClick={() => this.boundArrangement.setExportedData()}>
           Export Data
         </button>

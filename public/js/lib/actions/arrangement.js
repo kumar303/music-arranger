@@ -15,8 +15,12 @@ export function setCurrentPart(partNum) {
 }
 
 
-export function setCurrentPosition(position) {
+export function setPosition(partNum, position) {
   return (dispatch, getState) => {
+    dispatch({
+      type: actionTypes.SET_CURRENT_PART,
+      part: partNum,
+    });
     dispatch({
       type: actionTypes.SET_CURRENT_POSITION,
       position: position,
