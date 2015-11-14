@@ -33,12 +33,19 @@ export function setPosition(partNum, position) {
 function dispatchCurrentChords(dispatch, state) {
   const arrangement = state.arrangement;
   const part = arrangement.parts[arrangement.currentPart] || [];
-  const position = part[arrangement.currentPosition] || {};
+  const posIndex = arrangement.currentPosition;
+  const position = part[posIndex] || {};
 
   let chordRoot = position.chordRoot;
   let chordNotes = position.chordNotes;
 
   if (typeof chordRoot === 'undefined') {
+    if (posIndex > 0 && part[posIndex - 1] === undefined) {
+      // This means they clicked a square out of order.
+      // Among other weirdness, this would break rison decoding.
+      console.log('cannot add a chord out of order in the arrangement');
+      return;
+    }
     // When selecting song parts that don't exist yet,
     // this fills in a default chord just to indicate
     // that the action created a new part.
