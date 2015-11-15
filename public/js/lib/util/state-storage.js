@@ -68,6 +68,12 @@ export class StateStorage {
       if (!this.isListeningToPopState) {
         this.listenToPopState(dispatch);
       }
+      if (window.location.href.length > 2083) {
+        // Really, this is just a problem in IE but perhaps some upstream
+        // proxies would have issues as well (like GitUHub's CDN maybe,
+        // just a guess)
+        console.warn('this URL may not load in some browsers');
+      }
     } else {
       console.log('history.pushState is not available');
     }
