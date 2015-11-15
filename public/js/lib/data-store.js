@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
-import * as storage from 'lib/util/state-storage';
+import stateStorage from 'lib/util/state-storage';
 import rootReducer from './reducers';
 
 
@@ -21,7 +21,8 @@ const createStoreWithMiddleware = applyMiddleware(
 
 
 export function createReduxStore() {
-  const store = createStoreWithMiddleware(rootReducer, storage.restoreState());
+  const store = createStoreWithMiddleware(rootReducer,
+                                          stateStorage.restoreState());
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
@@ -31,8 +32,6 @@ export function createReduxStore() {
       store.replaceReducer(nextRootReducer);
     });
   }
-
-  store.subscribe(() => storage.saveState(store.getState()));
 
   return store;
 }

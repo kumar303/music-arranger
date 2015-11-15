@@ -1,4 +1,5 @@
 import * as actionTypes from 'lib/constants/action-types';
+import stateStorage from 'lib/util/state-storage';
 
 
 export function appError(error) {
@@ -10,8 +11,14 @@ export function appError(error) {
 
 
 export function resetState() {
-  return {
-    type: actionTypes.RESET_STATE,
+  return (dispatch, getState) => {
+    dispatch({
+      type: actionTypes.RESET_STATE,
+    });
+    stateStorage.saveState({
+      dispatch: dispatch,
+      state: getState(),
+    });
   };
 }
 
