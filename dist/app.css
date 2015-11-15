@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 /**
  * 1. Set default font family to sans-serif.
@@ -434,90 +433,98 @@ a {
   overflow: hidden;
 }
 
-button {
-  cursor: pointer;
-  border-radius: 0;
+.button {
+  display: inline-block;
+  text-decoration: none;
 }
 
-button, select {
-  font-size: 1em;
-  padding: 0.2em;
-  text-shadow: 0pt 1px 1px rgba(255, 255, 255, 0.75);
-  background-color: whitesmoke;
-  background-image: -moz-linear-gradient(center top, white, #e6e6e6);
-  box-shadow: 0pt 1px 0pt rgba(255, 255, 255, 0.2) inset, 0pt 1px 2px rgba(0, 0, 0, 0.05);
-  border-width: 1px;
-  border-style: solid;
-  border-color: #cccccc #cccccc #b3b3b3;
+.button,
+a.button,
+button,
+select {
+  font-size: 14px;
+  color: #fff;
+  background: #B59C9C;
+  margin: 2px 0;
+  padding: 0.5em 1em;
   text-align: center;
+  line-height: 16px;
+  border: 0;
+  border-radius: 4px;
 }
 
-.notification-list {
+select {
+  margin: 0;
+  outline: none;
+  padding-right: 23px;
+  display: inline-block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.select-holder {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  position: relative;
+}
+
+.select-holder:after {
+  content: "\25BC";
+  font: 13px "Consolas", monospace;
   color: #fff;
   margin: 0;
   padding: 0;
-  text-align: center;
-  top: 0;
-  z-index: 30;
-  position: static;
-  left: 20px;
-  right: 20px;
-  margin-bottom: 20px;
-}
-
-.notification {
-  list-style-type: none;
-  margin: 0;
-  padding: 0.5em;
-  position: relative;
-  border-radius: 3px;
-}
-
-.notification.error {
-  background: rgba(214, 57, 32, 0.9);
-}
-
-.notification.info {
-  background: rgba(0, 150, 220, 0.9);
-}
-
-.notification .dismiss:after {
-  color: #fff;
-  content: '×';
-  display: block;
-  height: 2em;
+  top: 8px;
+  right: 12px;
   position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2em;
+  pointer-events: none;
 }
 
-.notification-enter {
-  opacity: 0.01;
+/* Targetting Webkit browsers only. FF shows a smaller dropdown arrow. */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select {
+    padding-right: 28px;
+  }
+  .select-holder:after {
+    right: 10px;
+  }
 }
 
-.notification-enter.notification-enter-active {
-  opacity: 1;
-  transition: opacity .5s ease-in;
+.button,
+a.button,
+button {
+  cursor: pointer;
+  transition-duration: 150ms;
+  transition-property: background-color;
 }
 
-.notification-leave {
-  opacity: 1;
+.button:active, .button:hover, .button:focus, .button.active,
+a.button:active,
+a.button:hover,
+a.button:focus,
+a.button.active,
+button:active,
+button:hover,
+button:focus,
+button.active {
+  color: #fff;
+  background: #7D7171;
 }
 
-.notification-leave.notification-leave-active {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
+.button:focus,
+a.button:focus,
+button:focus {
+  border-color: #000;
+  box-shadow: 0 0 5px 0 #000;
+  outline: none;
 }
 
-.notification-appear {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
-}
-
-.notification-appear.notification-appear-active {
-  opacity: 1;
+button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
 }
 
 .overlay {
@@ -527,11 +534,10 @@ button, select {
   width: 100%;
   height: 100%;
   z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .overlay .overlay-panel {
-  border: 0;
+  border: 5px solid #B59C9C;
   border-radius: 4px;
   width: 500px;
   margin: 60px auto;
@@ -547,7 +553,7 @@ button, select {
 
 .overlay .overlay-panel button {
   margin-top: 10px;
-  padding: 0 5em;
+  padding: 0.5em 5em;
 }
 
 @keyframes spin {
@@ -646,16 +652,21 @@ button.spinner:after {
   float: left;
   text-align: center;
   padding: 5px 0 5px 0;
-  border: 2px solid black;
+  border: 2px solid #000;
   border-left: none;
+}
+
+.arrangement a:first-child {
+  border-left: 2px solid #000;
 }
 
 .arrangement a:link, .arrangement a:active, .arrangement a:visited, .arrangement a:hover {
   color: #000;
 }
 
-.arrangement a:first-child {
-  border-left: 2px solid black;
+.arrangement a.active, .arrangement a:hover {
+  color: #fff;
+  background-color: #EFBCBC;
 }
 
 #controls {

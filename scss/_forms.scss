@@ -1,0 +1,87 @@
+.button {
+  display: inline-block;
+  text-decoration: none;
+}
+
+// Select styles from
+// http://cssdeck.com/labs/styling-select-box-with-css3
+
+.button,
+a.button,
+button,
+select {
+  font-size: $base-font;
+  color: $white;
+  background: $red-grey;
+  margin: 2px 0;
+  padding: 0.5em 1em;
+  text-align: center;
+  line-height: 16px;
+  border: 0;
+  border-radius: $small-border-radius;
+}
+
+
+select {
+    margin: 0;
+    outline: none;
+    padding-right: 23px;
+    display: inline-block;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.select-holder {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    position:relative;
+}
+.select-holder:after {
+    content: "\25BC";
+    font: 13px "Consolas", monospace;
+    color: $white;
+    margin: 0;
+    padding: 0;
+    top: 8px;
+    right: 12px;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Targetting Webkit browsers only. FF shows a smaller dropdown arrow. */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select {
+        padding-right: 28px;
+    }
+    .select-holder:after {
+        right: 10px;
+    }
+}
+
+.button,
+a.button,
+button {
+  cursor: pointer;
+  transition-duration: $short-transition;
+  transition-property: background-color;
+
+  &:active,
+  &:hover,
+  &:focus,
+  &.active {
+    color: $white;
+    background: $bold-red-grey;
+  }
+
+  &:focus {
+    @include focus();
+  }
+}
+
+button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}

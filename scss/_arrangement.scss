@@ -8,14 +8,19 @@
     float: left;
     text-align: center;
     padding: 5px 0 5px 0;
-    border: 2px solid black;
+    border: 2px solid $black;
     border-left: none;
 
-    &:link, &:active, &:visited, &:hover {
-        color: #000;
+    &:first-child {
+        border-left: 2px solid $black;
     }
-}
 
-.arrangement a:first-child {
-    border-left: 2px solid black;
+    &:link, &:active, &:visited, &:hover {
+        color: $black;
+    }
+
+    &.active, &:hover {
+        color: $white;
+        background-color: $pink-grey;
+    }
 }

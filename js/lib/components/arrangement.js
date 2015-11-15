@@ -25,6 +25,8 @@ export class Arrangement extends Component {
     for (let partNum = 0; partNum < partLength + 1; partNum++) {
       parts.push(
         <ArrangementPart
+          currentPart={this.props.arrangement.currentPart}
+          currentPosition={this.props.arrangement.currentPosition}
           key={partNum}
           part={this.props.arrangement.parts[partNum] || []}
           partNum={partNum}

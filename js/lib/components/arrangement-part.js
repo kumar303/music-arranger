@@ -6,6 +6,8 @@ import { noteName } from 'lib/util/notes';
 export default class ArrangementPart extends Component {
 
   static propTypes = {
+    currentPart: PropTypes.number.isRequired,
+    currentPosition: PropTypes.number.isRequired,
     part: PropTypes.array.isRequired,
     partNum: PropTypes.number.isRequired,
     setPosition: PropTypes.func.isRequired,
@@ -21,9 +23,11 @@ export default class ArrangementPart extends Component {
     let chords = [];
     for (let position=0; position < 8; position++) {
       let chordData = this.props.part[position] || {};
+      let cls = (this.props.currentPart === this.props.partNum &&
+                 this.props.currentPosition === position) ? 'active' : '';
       chords.push(
         <a  onClick={(e) => this.setPosition(e, position)}
-            href="#" key={position}>
+            href="#" key={position} className={cls} >
           {typeof chordData.chordRoot !== 'undefined' ?
               noteName(chordData.chordRoot) : empty}
         </a>

@@ -64,10 +64,12 @@ export class Controls extends Component {
       );
     });
     return (
-      <select value={this.props.arrangement.currentPart}
-          onChange={(...args) => this.changePart(...args)}>
-        {options}
-      </select>
+      <div className="select-holder">
+        <select value={this.props.arrangement.currentPart}
+            onChange={(...args) => this.changePart(...args)}>
+          {options}
+        </select>
+      </div>
     );
   }
 
@@ -76,30 +78,33 @@ export class Controls extends Component {
       <div id="controls">
         {this.renderPartSelector()}
         <span>Chord:</span>
-        <select id="chord-select" value={this.props.controls.chordType}
-            onChange={(...args) => this.changeChordType(...args)}>
-          <option value="">None</option>
-          <option value="M">Major</option>
-          <option value="m">Minor</option>
-          <option value="aug">Augmented</option>
-          <option value="dim">Diminished</option>
-          <option value="sus4">Sustained 4th</option>
-          <option value="sus2">Sustained 2nd</option>
-          <option value="5">Fifth</option>
-          <option value="6">Sixth</option>
-          <option value="m6">Minor 6th</option>
-          <option value="7">Seventh</option>
-          <option value="M7">Major 7th</option>
-          <option value="m7">Minor 7th</option>
-        </select>
+        <div className="select-holder">
+          <select id="chord-select" value={this.props.controls.chordType}
+              onChange={(...args) => this.changeChordType(...args)}>
+            <option value="">None</option>
+            <option value="M">Major</option>
+            <option value="m">Minor</option>
+            <option value="aug">Augmented</option>
+            <option value="dim">Diminished</option>
+            <option value="sus4">Sustained 4th</option>
+            <option value="sus2">Sustained 2nd</option>
+            <option value="5">Fifth</option>
+            <option value="6">Sixth</option>
+            <option value="m6">Minor 6th</option>
+            <option value="7">Seventh</option>
+            <option value="M7">Major 7th</option>
+            <option value="m7">Minor 7th</option>
+          </select>
+        </div>
+        <span>Invert:</span>
         <button className="inverter" onClick={(e) => this.invertDown(e)}>
-          Invert Down
+          Down
         </button>
         <button onClick={(e) => this.resetInversion(e)}>
           {this.props.controls.chordInversion}
         </button>
         <button className="inverter" onClick={(e) => this.invertUp(e)}>
-          Invert Up
+          Up
         </button>
         <span>Arrangement:</span>
         <button onClick={() => this.boundArrangement.setExportedData()}>

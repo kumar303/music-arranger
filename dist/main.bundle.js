@@ -21917,6 +21917,8 @@
 	      var partLength = this.props.arrangement.parts.length;
 	      for (var partNum = 0; partNum < partLength + 1; partNum++) {
 	        parts.push(_react2['default'].createElement(_libComponentsArrangementPart2['default'], {
+	          currentPart: this.props.arrangement.currentPart,
+	          currentPosition: this.props.arrangement.currentPosition,
 	          key: partNum,
 	          part: this.props.arrangement.parts[partNum] || [],
 	          partNum: partNum,
@@ -22003,12 +22005,13 @@
 	
 	      var _loop = function (position) {
 	        var chordData = _this.props.part[position] || {};
+	        var cls = _this.props.currentPart === _this.props.partNum && _this.props.currentPosition === position ? 'active' : '';
 	        chords.push(_react2['default'].createElement(
 	          'a',
 	          { onClick: function (e) {
 	              return _this.setPosition(e, position);
 	            },
-	            href: '#', key: position },
+	            href: '#', key: position, className: cls },
 	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.noteName)(chordData.chordRoot) : empty
 	        ));
 	      };
@@ -22035,6 +22038,8 @@
 	  }], [{
 	    key: 'propTypes',
 	    value: {
+	      currentPart: _react.PropTypes.number.isRequired,
+	      currentPosition: _react.PropTypes.number.isRequired,
 	      part: _react.PropTypes.array.isRequired,
 	      partNum: _react.PropTypes.number.isRequired,
 	      setPosition: _react.PropTypes.func.isRequired
@@ -22200,16 +22205,20 @@
 	        ));
 	      });
 	      return _react2['default'].createElement(
-	        'select',
-	        { value: this.props.arrangement.currentPart,
-	          onChange: function () {
-	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	              args[_key] = arguments[_key];
-	            }
+	        'div',
+	        { className: 'select-holder' },
+	        _react2['default'].createElement(
+	          'select',
+	          { value: this.props.arrangement.currentPart,
+	            onChange: function () {
+	              for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	                args[_key] = arguments[_key];
+	              }
 	
-	            return _this.changePart.apply(_this, args);
-	          } },
-	        options
+	              return _this.changePart.apply(_this, args);
+	            } },
+	          options
+	        )
 	      );
 	    }
 	  }, {
@@ -22227,87 +22236,96 @@
 	          'Chord:'
 	        ),
 	        _react2['default'].createElement(
-	          'select',
-	          { id: 'chord-select', value: this.props.controls.chordType,
-	            onChange: function () {
-	              for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	                args[_key2] = arguments[_key2];
-	              }
+	          'div',
+	          { className: 'select-holder' },
+	          _react2['default'].createElement(
+	            'select',
+	            { id: 'chord-select', value: this.props.controls.chordType,
+	              onChange: function () {
+	                for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	                  args[_key2] = arguments[_key2];
+	                }
 	
-	              return _this2.changeChordType.apply(_this2, args);
-	            } },
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '' },
-	            'None'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'M' },
-	            'Major'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'm' },
-	            'Minor'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'aug' },
-	            'Augmented'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'dim' },
-	            'Diminished'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'sus4' },
-	            'Sustained 4th'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'sus2' },
-	            'Sustained 2nd'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '5' },
-	            'Fifth'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '6' },
-	            'Sixth'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'm6' },
-	            'Minor 6th'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '7' },
-	            'Seventh'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'M7' },
-	            'Major 7th'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'm7' },
-	            'Minor 7th'
+	                return _this2.changeChordType.apply(_this2, args);
+	              } },
+	            _react2['default'].createElement(
+	              'option',
+	              { value: '' },
+	              'None'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'M' },
+	              'Major'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'm' },
+	              'Minor'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'aug' },
+	              'Augmented'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'dim' },
+	              'Diminished'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'sus4' },
+	              'Sustained 4th'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'sus2' },
+	              'Sustained 2nd'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: '5' },
+	              'Fifth'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: '6' },
+	              'Sixth'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'm6' },
+	              'Minor 6th'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: '7' },
+	              'Seventh'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'M7' },
+	              'Major 7th'
+	            ),
+	            _react2['default'].createElement(
+	              'option',
+	              { value: 'm7' },
+	              'Minor 7th'
+	            )
 	          )
+	        ),
+	        _react2['default'].createElement(
+	          'span',
+	          null,
+	          'Invert:'
 	        ),
 	        _react2['default'].createElement(
 	          'button',
 	          { className: 'inverter', onClick: function (e) {
 	              return _this2.invertDown(e);
 	            } },
-	          'Invert Down'
+	          'Down'
 	        ),
 	        _react2['default'].createElement(
 	          'button',
@@ -22321,7 +22339,7 @@
 	          { className: 'inverter', onClick: function (e) {
 	              return _this2.invertUp(e);
 	            } },
-	          'Invert Up'
+	          'Up'
 	        ),
 	        _react2['default'].createElement(
 	          'span',
