@@ -6,7 +6,7 @@ var webpack = require('webpack');
 module.exports = {
   devtool: 'source-map',
   entry: {
-    'main': './public/js/main.jsx',
+    'main': './public/js/main.js',
   },
   failOnError: true,
   output: {
