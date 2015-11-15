@@ -1,6 +1,7 @@
 import * as actionTypes from 'lib/constants/action-types';
 
-import { setChordNotes } from './chords';
+import stateStorage from 'lib/util/state-storage';
+import { setChordNotes } from './arrangement';
 
 
 export function touchNote(note) {
@@ -14,5 +15,9 @@ export function touchNote(note) {
       root: note,
       chordType: state.pianoView.chordType,
     }));
+    stateStorage.saveState({
+      dispatch: dispatch,
+      state: getState(),
+    });
   };
 }

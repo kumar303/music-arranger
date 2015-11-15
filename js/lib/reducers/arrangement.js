@@ -15,6 +15,8 @@ export default function arrangement(state, action) {
   switch (action.type) {
     case actionTypes.RESET_STATE:
       return initialArrangementState;
+    case actionTypes.RESTORE_STATE:
+      return action.state.arrangement;
     case actionTypes.SET_EXPORTED_DATA:
       return Object.assign({}, state, {
         exportedData: action.exportedData,
@@ -67,7 +69,7 @@ function mergeNewPart(state, newData) {
   // Returns a new part merged into the current position of state.parts.
   //
   let part = (state.parts[state.currentPart] || []).slice();
-  let position = part[state.currentPosition] || {};
+  let position = Object.assign({}, part[state.currentPosition] || {});
   let mergedData = Object.assign({}, position, newData);
   part[state.currentPosition] = mergedData;
 

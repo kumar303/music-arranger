@@ -20833,7 +20833,7 @@
 	
 	var appActions = _interopRequireWildcard(_libActionsApp);
 	
-	var _libActionsArrangement = __webpack_require__(181);
+	var _libActionsArrangement = __webpack_require__(182);
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
 	
@@ -20921,20 +20921,25 @@
 /* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(fetch) {'use strict';
+	'use strict';
 	
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
 	exports.appError = appError;
 	exports.resetState = resetState;
-	exports.showStatus = showStatus;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libConstantsActionTypes = __webpack_require__(180);
+	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
+	
+	var _libUtilStateStorage = __webpack_require__(180);
+	
+	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
 	
 	function appError(error) {
 	  return {
@@ -20944,380 +20949,19 @@
 	}
 	
 	function resetState() {
-	  return {
-	    type: actionTypes.RESET_STATE
-	  };
-	}
-	
-	function showStatus() {
-	  var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
-	  var _ref$apiFetch = _ref.apiFetch;
-	  var apiFetch = _ref$apiFetch === undefined ? fetch : _ref$apiFetch;
-	
-	  return function (dispatch) {
-	    return apiFetch('http://olympia.dev:8000/', { headers: { accept: 'application/json' } }).then(function (response) {
-	      return response.json();
-	    }).then(function (data) {
-	      dispatch({
-	        type: actionTypes.SET_STATUS,
-	        status: data.status
-	      });
-	    })['catch'](function (error) {
-	      dispatch({
-	        type: actionTypes.APP_ERROR,
-	        error: 'Could not fetch status: ' + error
-	      });
+	  return function (dispatch, getState) {
+	    dispatch({
+	      type: actionTypes.RESET_STATE
+	    });
+	    _libUtilStateStorage2['default'].saveState({
+	      dispatch: dispatch,
+	      state: getState()
 	    });
 	  };
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(179)))
 
 /***/ },
 /* 179 */
-/***/ function(module, exports) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {/*** IMPORTS FROM imports-loader ***/
-	(function() {
-	
-	(function() {
-	  'use strict';
-	
-	  if (self.fetch) {
-	    return
-	  }
-	
-	  function normalizeName(name) {
-	    if (typeof name !== 'string') {
-	      name = name.toString();
-	    }
-	    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
-	      throw new TypeError('Invalid character in header field name')
-	    }
-	    return name.toLowerCase()
-	  }
-	
-	  function normalizeValue(value) {
-	    if (typeof value !== 'string') {
-	      value = value.toString();
-	    }
-	    return value
-	  }
-	
-	  function Headers(headers) {
-	    this.map = {}
-	
-	    if (headers instanceof Headers) {
-	      headers.forEach(function(value, name) {
-	        this.append(name, value)
-	      }, this)
-	
-	    } else if (headers) {
-	      Object.getOwnPropertyNames(headers).forEach(function(name) {
-	        this.append(name, headers[name])
-	      }, this)
-	    }
-	  }
-	
-	  Headers.prototype.append = function(name, value) {
-	    name = normalizeName(name)
-	    value = normalizeValue(value)
-	    var list = this.map[name]
-	    if (!list) {
-	      list = []
-	      this.map[name] = list
-	    }
-	    list.push(value)
-	  }
-	
-	  Headers.prototype['delete'] = function(name) {
-	    delete this.map[normalizeName(name)]
-	  }
-	
-	  Headers.prototype.get = function(name) {
-	    var values = this.map[normalizeName(name)]
-	    return values ? values[0] : null
-	  }
-	
-	  Headers.prototype.getAll = function(name) {
-	    return this.map[normalizeName(name)] || []
-	  }
-	
-	  Headers.prototype.has = function(name) {
-	    return this.map.hasOwnProperty(normalizeName(name))
-	  }
-	
-	  Headers.prototype.set = function(name, value) {
-	    this.map[normalizeName(name)] = [normalizeValue(value)]
-	  }
-	
-	  Headers.prototype.forEach = function(callback, thisArg) {
-	    Object.getOwnPropertyNames(this.map).forEach(function(name) {
-	      this.map[name].forEach(function(value) {
-	        callback.call(thisArg, value, name, this)
-	      }, this)
-	    }, this)
-	  }
-	
-	  function consumed(body) {
-	    if (body.bodyUsed) {
-	      return Promise.reject(new TypeError('Already read'))
-	    }
-	    body.bodyUsed = true
-	  }
-	
-	  function fileReaderReady(reader) {
-	    return new Promise(function(resolve, reject) {
-	      reader.onload = function() {
-	        resolve(reader.result)
-	      }
-	      reader.onerror = function() {
-	        reject(reader.error)
-	      }
-	    })
-	  }
-	
-	  function readBlobAsArrayBuffer(blob) {
-	    var reader = new FileReader()
-	    reader.readAsArrayBuffer(blob)
-	    return fileReaderReady(reader)
-	  }
-	
-	  function readBlobAsText(blob) {
-	    var reader = new FileReader()
-	    reader.readAsText(blob)
-	    return fileReaderReady(reader)
-	  }
-	
-	  var support = {
-	    blob: 'FileReader' in self && 'Blob' in self && (function() {
-	      try {
-	        new Blob();
-	        return true
-	      } catch(e) {
-	        return false
-	      }
-	    })(),
-	    formData: 'FormData' in self
-	  }
-	
-	  function Body() {
-	    this.bodyUsed = false
-	
-	
-	    this._initBody = function(body) {
-	      this._bodyInit = body
-	      if (typeof body === 'string') {
-	        this._bodyText = body
-	      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-	        this._bodyBlob = body
-	      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-	        this._bodyFormData = body
-	      } else if (!body) {
-	        this._bodyText = ''
-	      } else {
-	        throw new Error('unsupported BodyInit type')
-	      }
-	    }
-	
-	    if (support.blob) {
-	      this.blob = function() {
-	        var rejected = consumed(this)
-	        if (rejected) {
-	          return rejected
-	        }
-	
-	        if (this._bodyBlob) {
-	          return Promise.resolve(this._bodyBlob)
-	        } else if (this._bodyFormData) {
-	          throw new Error('could not read FormData body as blob')
-	        } else {
-	          return Promise.resolve(new Blob([this._bodyText]))
-	        }
-	      }
-	
-	      this.arrayBuffer = function() {
-	        return this.blob().then(readBlobAsArrayBuffer)
-	      }
-	
-	      this.text = function() {
-	        var rejected = consumed(this)
-	        if (rejected) {
-	          return rejected
-	        }
-	
-	        if (this._bodyBlob) {
-	          return readBlobAsText(this._bodyBlob)
-	        } else if (this._bodyFormData) {
-	          throw new Error('could not read FormData body as text')
-	        } else {
-	          return Promise.resolve(this._bodyText)
-	        }
-	      }
-	    } else {
-	      this.text = function() {
-	        var rejected = consumed(this)
-	        return rejected ? rejected : Promise.resolve(this._bodyText)
-	      }
-	    }
-	
-	    if (support.formData) {
-	      this.formData = function() {
-	        return this.text().then(decode)
-	      }
-	    }
-	
-	    this.json = function() {
-	      return this.text().then(JSON.parse)
-	    }
-	
-	    return this
-	  }
-	
-	  // HTTP methods whose capitalization should be normalized
-	  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
-	
-	  function normalizeMethod(method) {
-	    var upcased = method.toUpperCase()
-	    return (methods.indexOf(upcased) > -1) ? upcased : method
-	  }
-	
-	  function Request(url, options) {
-	    options = options || {}
-	    this.url = url
-	
-	    this.credentials = options.credentials || 'omit'
-	    this.headers = new Headers(options.headers)
-	    this.method = normalizeMethod(options.method || 'GET')
-	    this.mode = options.mode || null
-	    this.referrer = null
-	
-	    if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
-	      throw new TypeError('Body not allowed for GET or HEAD requests')
-	    }
-	    this._initBody(options.body)
-	  }
-	
-	  function decode(body) {
-	    var form = new FormData()
-	    body.trim().split('&').forEach(function(bytes) {
-	      if (bytes) {
-	        var split = bytes.split('=')
-	        var name = split.shift().replace(/\+/g, ' ')
-	        var value = split.join('=').replace(/\+/g, ' ')
-	        form.append(decodeURIComponent(name), decodeURIComponent(value))
-	      }
-	    })
-	    return form
-	  }
-	
-	  function headers(xhr) {
-	    var head = new Headers()
-	    var pairs = xhr.getAllResponseHeaders().trim().split('\n')
-	    pairs.forEach(function(header) {
-	      var split = header.trim().split(':')
-	      var key = split.shift().trim()
-	      var value = split.join(':').trim()
-	      head.append(key, value)
-	    })
-	    return head
-	  }
-	
-	  Body.call(Request.prototype)
-	
-	  function Response(bodyInit, options) {
-	    if (!options) {
-	      options = {}
-	    }
-	
-	    this._initBody(bodyInit)
-	    this.type = 'default'
-	    this.url = null
-	    this.status = options.status
-	    this.ok = this.status >= 200 && this.status < 300
-	    this.statusText = options.statusText
-	    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
-	    this.url = options.url || ''
-	  }
-	
-	  Body.call(Response.prototype)
-	
-	  self.Headers = Headers;
-	  self.Request = Request;
-	  self.Response = Response;
-	
-	  self.fetch = function(input, init) {
-	    // TODO: Request constructor should accept input, init
-	    var request
-	    if (Request.prototype.isPrototypeOf(input) && !init) {
-	      request = input
-	    } else {
-	      request = new Request(input, init)
-	    }
-	
-	    return new Promise(function(resolve, reject) {
-	      var xhr = new XMLHttpRequest()
-	
-	      function responseURL() {
-	        if ('responseURL' in xhr) {
-	          return xhr.responseURL
-	        }
-	
-	        // Avoid security warnings on getResponseHeader when not allowed by CORS
-	        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
-	          return xhr.getResponseHeader('X-Request-URL')
-	        }
-	
-	        return;
-	      }
-	
-	      xhr.onload = function() {
-	        var status = (xhr.status === 1223) ? 204 : xhr.status
-	        if (status < 100 || status > 599) {
-	          reject(new TypeError('Network request failed'))
-	          return
-	        }
-	        var options = {
-	          status: status,
-	          statusText: xhr.statusText,
-	          headers: headers(xhr),
-	          url: responseURL()
-	        }
-	        var body = 'response' in xhr ? xhr.response : xhr.responseText;
-	        resolve(new Response(body, options))
-	      }
-	
-	      xhr.onerror = function() {
-	        reject(new TypeError('Network request failed'))
-	      }
-	
-	      xhr.open(request.method, request.url, true)
-	
-	      if (request.credentials === 'include') {
-	        xhr.withCredentials = true
-	      }
-	
-	      if ('responseType' in xhr && support.blob) {
-	        xhr.responseType = 'blob'
-	      }
-	
-	      request.headers.forEach(function(value, name) {
-	        xhr.setRequestHeader(name, value)
-	      })
-	
-	      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
-	    })
-	  }
-	  self.fetch.polyfill = true
-	})();
-	
-	
-	/*** EXPORTS FROM exports-loader ***/
-	module.exports = global.fetch}.call(global));
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 180 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21331,6 +20975,8 @@
 	exports.CLEAR_EXPORTED_DATA = CLEAR_EXPORTED_DATA;
 	var RESET_STATE = 'RESET_STATE';
 	exports.RESET_STATE = RESET_STATE;
+	var RESTORE_STATE = 'RESTORE_STATE';
+	exports.RESTORE_STATE = RESTORE_STATE;
 	var SET_CHORD_INVERSION = 'SET_CHORD_INVERSION';
 	exports.SET_CHORD_INVERSION = SET_CHORD_INVERSION;
 	var SET_CHORD_NOTES = 'SET_CHORD_NOTES';
@@ -21349,216 +20995,7 @@
 	exports.TOUCH_NOTE = TOUCH_NOTE;
 
 /***/ },
-/* 181 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.setCurrentPart = setCurrentPart;
-	exports.setPosition = setPosition;
-	exports.clearExportedData = clearExportedData;
-	exports.setExportedData = setExportedData;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	var _libConstantsActionTypes = __webpack_require__(180);
-	
-	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
-	
-	var _chords = __webpack_require__(182);
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	function setCurrentPart(partNum) {
-	  return function (dispatch, getState) {
-	    dispatch({
-	      type: actionTypes.SET_CURRENT_PART,
-	      part: partNum
-	    });
-	    dispatchCurrentChords(dispatch, getState());
-	  };
-	}
-	
-	function setPosition(partNum, position) {
-	  return function (dispatch, getState) {
-	    dispatch({
-	      type: actionTypes.SET_CURRENT_PART,
-	      part: partNum
-	    });
-	    dispatch({
-	      type: actionTypes.SET_CURRENT_POSITION,
-	      position: position
-	    });
-	    dispatchCurrentChords(dispatch, getState());
-	  };
-	}
-	
-	function dispatchCurrentChords(dispatch, state) {
-	  var arrangement = state.arrangement;
-	  var part = arrangement.parts[arrangement.currentPart] || [];
-	  var posIndex = arrangement.currentPosition;
-	  var position = part[posIndex] || {};
-	
-	  var chordRoot = position.chordRoot;
-	  var chordNotes = position.chordNotes;
-	
-	  if (typeof chordRoot === 'undefined') {
-	    if (posIndex > 0 && part[posIndex - 1] === undefined) {
-	      // This means they clicked a square out of order.
-	      // Among other weirdness, this would break rison decoding.
-	      console.log('cannot add a chord out of order in the arrangement');
-	      return;
-	    }
-	    // When selecting song parts that don't exist yet,
-	    // this fills in a default chord just to indicate
-	    // that the action created a new part.
-	    chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
-	    var chordNotesAction = (0, _chords.setChordNotes)({
-	      root: chordRoot,
-	      chordType: state.pianoView.chordType
-	    });
-	    chordNotes = chordNotesAction.chordNotes;
-	  }
-	
-	  var chordType = position.chordType !== undefined ? position.chordType : state.controls.chordType;
-	  var chordInversion = position.chordInversion !== undefined ? position.chordInversion : state.controls.chordInversion;
-	
-	  dispatch({
-	    type: actionTypes.TOUCH_NOTE,
-	    note: chordRoot
-	  });
-	  dispatch({
-	    type: actionTypes.SET_CHORD_NOTES,
-	    chordNotes: chordNotes
-	  });
-	  dispatch({
-	    type: actionTypes.SET_CHORD_TYPE,
-	    chordType: chordType
-	  });
-	  dispatch({
-	    type: actionTypes.SET_CHORD_INVERSION,
-	    chordInversion: chordInversion
-	  });
-	}
-	
-	function clearExportedData() {
-	  return {
-	    type: actionTypes.CLEAR_EXPORTED_DATA
-	  };
-	}
-	
-	function setExportedData() {
-	  return function (dispatch, getState) {
-	    var state = getState();
-	    dispatch({
-	      type: actionTypes.SET_EXPORTED_DATA,
-	      exportedData: Object.assign({}, {
-	        parts: state.arrangement.parts
-	      })
-	    });
-	  };
-	}
-	
-	function _defaultChordRoot(previousPosition) {
-	  var root = null;
-	  if (previousPosition) {
-	    root = previousPosition.chordRoot + 2;
-	  }
-	  if (root === null || root > _libConstantsPiano.PIANO_KEY_END) {
-	    root = _libConstantsPiano.PIANO_KEY_START;
-	  }
-	  return root;
-	}
-
-/***/ },
-/* 182 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.setChordNotes = setChordNotes;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	var _libConstantsActionTypes = __webpack_require__(180);
-	
-	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	function setChordNotes(_ref) {
-	  var root = _ref.root;
-	  var _ref$chordType = _ref.chordType;
-	  var chordType = _ref$chordType === undefined ? 'M' : _ref$chordType;
-	
-	  var chordNotes = [];
-	  chordNotes.push(root);
-	  _libConstantsPiano.CHORD_MAP[chordType].forEach(function (sumBy) {
-	    chordNotes.push(root + sumBy);
-	  });
-	  return {
-	    type: actionTypes.SET_CHORD_NOTES,
-	    chordNotes: chordNotes
-	  };
-	}
-
-/***/ },
-/* 183 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	var PIANO_KEY_START = -12;exports.PIANO_KEY_START = PIANO_KEY_START;
-	// low C
-	var PIANO_KEY_END = 13;exports.PIANO_KEY_END = PIANO_KEY_END;
-	// high C#
-	
-	var NOTE_NAMES = {
-	  0: 'C',
-	  1: 'C#',
-	  2: 'D',
-	  3: 'Eb',
-	  4: 'E',
-	  5: 'F',
-	  6: 'F#',
-	  7: 'G',
-	  8: 'Ab',
-	  9: 'A',
-	  10: 'Bb',
-	  11: 'B',
-	  12: 'C'
-	};
-	
-	exports.NOTE_NAMES = NOTE_NAMES;
-	// These are the steps you'd add to a root note to form each chord.
-	var CHORD_MAP = {
-	  '': [], // no chord
-	  'M': [4, 7],
-	  'm': [3, 7],
-	  'aug': [4, 8],
-	  'dim': [3, 6],
-	  'sus4': [5, 7],
-	  'sus2': [2, 7],
-	  '5': [7],
-	  '6': [4, 7, 9],
-	  'm6': [3, 7, 9],
-	  '7': [4, 7, 10],
-	  'M7': [4, 7, 11],
-	  'm7': [3, 7, 10]
-	};
-	exports.CHORD_MAP = CHORD_MAP;
-
-/***/ },
-/* 184 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21569,1167 +21006,130 @@
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(159);
-	
-	var _redux = __webpack_require__(166);
-	
-	var _libActionsArrangement = __webpack_require__(181);
-	
-	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
-	
-	var _libComponentsArrangementPart = __webpack_require__(185);
-	
-	var _libComponentsArrangementPart2 = _interopRequireDefault(_libComponentsArrangementPart);
-	
-	var Arrangement = (function (_Component) {
-	  _inherits(Arrangement, _Component);
-	
-	  _createClass(Arrangement, null, [{
-	    key: 'propTypes',
-	    value: {
-	      arrangement: _react.PropTypes.object.isRequired,
-	      dispatch: _react.PropTypes.func.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  function Arrangement(props) {
-	    _classCallCheck(this, Arrangement);
-	
-	    _get(Object.getPrototypeOf(Arrangement.prototype), 'constructor', this).call(this, props);
-	    this.boundArrangement = (0, _redux.bindActionCreators)(arrangementActions, props.dispatch);
-	  }
-	
-	  _createClass(Arrangement, [{
-	    key: 'renderParts',
-	    value: function renderParts() {
-	      var parts = [];
-	      var partLength = this.props.arrangement.parts.length;
-	      for (var partNum = 0; partNum < partLength + 1; partNum++) {
-	        parts.push(_react2['default'].createElement(_libComponentsArrangementPart2['default'], {
-	          key: partNum,
-	          part: this.props.arrangement.parts[partNum] || [],
-	          partNum: partNum,
-	          setPosition: this.boundArrangement.setPosition }));
-	      }
-	      return parts;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        null,
-	        this.renderParts()
-	      );
-	    }
-	  }]);
-	
-	  return Arrangement;
-	})(_react.Component);
-	
-	exports.Arrangement = Arrangement;
-	
-	function select(state) {
-	  return {
-	    arrangement: state.arrangement
-	  };
-	}
-	
-	exports['default'] = (0, _reactRedux.connect)(select)(Arrangement);
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _libUtilNotes = __webpack_require__(186);
-	
-	var ArrangementPart = (function (_Component) {
-	  _inherits(ArrangementPart, _Component);
-	
-	  function ArrangementPart() {
-	    _classCallCheck(this, ArrangementPart);
-	
-	    _get(Object.getPrototypeOf(ArrangementPart.prototype), 'constructor', this).apply(this, arguments);
-	  }
-	
-	  _createClass(ArrangementPart, [{
-	    key: 'setPosition',
-	    value: function setPosition(event, position) {
-	      event.preventDefault();
-	      this.props.setPosition(this.props.partNum, position);
-	    }
-	  }, {
-	    key: 'renderChords',
-	    value: function renderChords() {
-	      var _this = this;
-	
-	      var empty = _react2['default'].createElement(
-	        'span',
-	        null,
-	        ' '
-	      );
-	      var chords = [];
-	
-	      var _loop = function (position) {
-	        var chordData = _this.props.part[position] || {};
-	        chords.push(_react2['default'].createElement(
-	          'a',
-	          { onClick: function (e) {
-	              return _this.setPosition(e, position);
-	            },
-	            href: '#', key: position },
-	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.noteName)(chordData.chordRoot) : empty
-	        ));
-	      };
-	
-	      for (var position = 0; position < 8; position++) {
-	        _loop(position);
-	      }
-	      return chords;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: 'arrangement' },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'elements' },
-	          this.renderChords()
-	        ),
-	        _react2['default'].createElement('div', { className: 'clear' })
-	      );
-	    }
-	  }], [{
-	    key: 'propTypes',
-	    value: {
-	      part: _react.PropTypes.array.isRequired,
-	      partNum: _react.PropTypes.number.isRequired,
-	      setPosition: _react.PropTypes.func.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  return ArrangementPart;
-	})(_react.Component);
-	
-	exports['default'] = ArrangementPart;
-	module.exports = exports['default'];
-
-/***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.noteName = noteName;
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	function noteName(noteNum) {
-	  // Keep shifting until the note is in the 0-12 range so we can return its
-	  // name. There is probably a way better way to do this with magic math.
-	  var shift;
-	  if (noteNum < 0) {
-	    shift = function (num) {
-	      return num + 12;
-	    };
-	  } else {
-	    shift = function (num) {
-	      return num - 12;
-	    };
-	  }
-	
-	  var name;
-	  while (true) {
-	    name = _libConstantsPiano.NOTE_NAMES[noteNum];
-	    if (typeof name !== 'undefined') {
-	      return name;
-	    }
-	    noteNum = shift(noteNum);
-	  }
-	}
-
-/***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(159);
-	
-	var _redux = __webpack_require__(166);
-	
-	var _libActionsApp = __webpack_require__(178);
-	
-	var appActions = _interopRequireWildcard(_libActionsApp);
-	
-	var _libActionsControls = __webpack_require__(188);
-	
-	var controlActions = _interopRequireWildcard(_libActionsControls);
-	
-	var _libActionsArrangement = __webpack_require__(181);
-	
-	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
-	
-	var Controls = (function (_Component) {
-	  _inherits(Controls, _Component);
-	
-	  _createClass(Controls, null, [{
-	    key: 'propTypes',
-	    value: {
-	      arrangement: _react.PropTypes.object.isRequired,
-	      controls: _react.PropTypes.object.isRequired,
-	      dispatch: _react.PropTypes.func.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  function Controls(props) {
-	    _classCallCheck(this, Controls);
-	
-	    _get(Object.getPrototypeOf(Controls.prototype), 'constructor', this).call(this, props);
-	    this.boundAppActions = (0, _redux.bindActionCreators)(appActions, props.dispatch);
-	    this.boundControlActions = (0, _redux.bindActionCreators)(controlActions, props.dispatch);
-	    this.boundArrangement = (0, _redux.bindActionCreators)(arrangementActions, props.dispatch);
-	  }
-	
-	  _createClass(Controls, [{
-	    key: 'changeChordType',
-	    value: function changeChordType(event) {
-	      event.preventDefault();
-	      this.boundControlActions.setChordType(event.currentTarget.value);
-	    }
-	  }, {
-	    key: 'changePart',
-	    value: function changePart(event) {
-	      event.preventDefault();
-	      this.boundArrangement.setCurrentPart(parseInt(event.currentTarget.value));
-	    }
-	  }, {
-	    key: 'invertDown',
-	    value: function invertDown(event) {
-	      event.preventDefault();
-	      this.boundControlActions.invertChord(-1);
-	    }
-	  }, {
-	    key: 'invertUp',
-	    value: function invertUp(event) {
-	      event.preventDefault();
-	      this.boundControlActions.invertChord(1);
-	    }
-	  }, {
-	    key: 'resetInversion',
-	    value: function resetInversion(event) {
-	      event.preventDefault();
-	      this.boundControlActions.resetChordInversion();
-	    }
-	  }, {
-	    key: 'renderPartSelector',
-	    value: function renderPartSelector() {
-	      var _this = this;
-	
-	      var options = [];
-	      this.props.arrangement.parts.forEach(function (data, partNum) {
-	        options.push(_react2['default'].createElement(
-	          'option',
-	          { key: partNum, value: partNum },
-	          'Part ',
-	          partNum + 1
-	        ));
-	      });
-	      return _react2['default'].createElement(
-	        'select',
-	        { value: this.props.arrangement.currentPart,
-	          onChange: function () {
-	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	              args[_key] = arguments[_key];
-	            }
-	
-	            return _this.changePart.apply(_this, args);
-	          } },
-	        options
-	      );
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
-	
-	      return _react2['default'].createElement(
-	        'div',
-	        { id: 'controls' },
-	        this.renderPartSelector(),
-	        _react2['default'].createElement(
-	          'button',
-	          { onClick: function () {
-	              return _this2.boundArrangement.setExportedData();
-	            } },
-	          'Export Data'
-	        ),
-	        _react2['default'].createElement(
-	          'button',
-	          { onClick: function () {
-	              return _this2.boundAppActions.resetState();
-	            } },
-	          'Clear Data'
-	        ),
-	        _react2['default'].createElement(
-	          'span',
-	          null,
-	          'Chord:'
-	        ),
-	        _react2['default'].createElement(
-	          'select',
-	          { id: 'chord-select', value: this.props.controls.chordType,
-	            onChange: function () {
-	              for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	                args[_key2] = arguments[_key2];
-	              }
-	
-	              return _this2.changeChordType.apply(_this2, args);
-	            } },
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '' },
-	            'None'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'M' },
-	            'Major'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'm' },
-	            'Minor'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'aug' },
-	            'Augmented'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'dim' },
-	            'Diminished'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'sus4' },
-	            'Sustained 4th'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'sus2' },
-	            'Sustained 2nd'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '5' },
-	            'Fifth'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '6' },
-	            'Sixth'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'm6' },
-	            'Minor 6th'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: '7' },
-	            'Seventh'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'M7' },
-	            'Major 7th'
-	          ),
-	          _react2['default'].createElement(
-	            'option',
-	            { value: 'm7' },
-	            'Minor 7th'
-	          )
-	        ),
-	        _react2['default'].createElement(
-	          'button',
-	          { className: 'inverter', onClick: function (e) {
-	              return _this2.invertDown(e);
-	            } },
-	          'Invert Down'
-	        ),
-	        _react2['default'].createElement(
-	          'button',
-	          { onClick: function (e) {
-	              return _this2.resetInversion(e);
-	            } },
-	          this.props.controls.chordInversion
-	        ),
-	        _react2['default'].createElement(
-	          'button',
-	          { className: 'inverter', onClick: function (e) {
-	              return _this2.invertUp(e);
-	            } },
-	          'Invert Up'
-	        )
-	      );
-	    }
-	  }]);
-	
-	  return Controls;
-	})(_react.Component);
-	
-	exports.Controls = Controls;
-	
-	function select(state) {
-	  return {
-	    controls: state.controls,
-	    arrangement: state.arrangement
-	  };
-	}
-	
-	exports['default'] = (0, _reactRedux.connect)(select)(Controls);
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.setChordType = setChordType;
-	exports.invertChord = invertChord;
-	exports.resetChordInversion = resetChordInversion;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	var _libConstantsActionTypes = __webpack_require__(180);
-	
-	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
-	
-	var _chords = __webpack_require__(182);
-	
-	function setChordType(chordType) {
-	  return function (dispatch, getState) {
-	    var state = getState();
-	    dispatch({
-	      type: actionTypes.SET_CHORD_TYPE,
-	      chordType: chordType
-	    });
-	    dispatch((0, _chords.setChordNotes)({
-	      root: state.pianoView.chordRoot,
-	      chordType: chordType
-	    }));
-	  };
-	}
-	
-	function invertChord(increment) {
-	  return function (dispatch, getState) {
-	    var state = getState();
-	    dispatch({
-	      type: actionTypes.SET_CHORD_INVERSION,
-	      chordInversion: state.controls.chordInversion + increment
-	    });
-	  };
-	}
-	
-	function resetChordInversion() {
-	  return {
-	    type: actionTypes.SET_CHORD_INVERSION,
-	    chordInversion: 0
-	  };
-	}
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _libComponentsPianoKey = __webpack_require__(190);
-	
-	var _libComponentsPianoKey2 = _interopRequireDefault(_libComponentsPianoKey);
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	var Piano = (function (_Component) {
-	  _inherits(Piano, _Component);
-	
-	  function Piano(props) {
-	    _classCallCheck(this, Piano);
-	
-	    _get(Object.getPrototypeOf(Piano.prototype), 'constructor', this).call(this, props);
-	    this.keys = [];
-	    for (var i = _libConstantsPiano.PIANO_KEY_START; i <= _libConstantsPiano.PIANO_KEY_END; i++) {
-	      this.keys.push(_react2['default'].createElement(_libComponentsPianoKey2['default'], { key: i, note: i }));
-	    }
-	  }
-	
-	  _createClass(Piano, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { id: 'piano' },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'keys' },
-	          this.keys
-	        ),
-	        _react2['default'].createElement('div', { className: 'clear' })
-	      );
-	    }
-	  }]);
-	
-	  return Piano;
-	})(_react.Component);
-	
-	exports['default'] = Piano;
-	module.exports = exports['default'];
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(159);
-	
-	var _redux = __webpack_require__(166);
-	
-	var _libActionsPiano = __webpack_require__(191);
-	
-	var pianoActions = _interopRequireWildcard(_libActionsPiano);
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	var blackKeys = {
-	  1: 1,
-	  3: 3,
-	  6: 1,
-	  8: 2,
-	  10: 3
-	};
-	
-	var PianoKey = (function (_Component) {
-	  _inherits(PianoKey, _Component);
-	
-	  _createClass(PianoKey, null, [{
-	    key: 'propTypes',
-	
-	    // TODO: should probably move a lot of this logic to <Piano> for speed.
-	
-	    value: {
-	      controls: _react.PropTypes.object.isRequired,
-	      dispatch: _react.PropTypes.func.isRequired,
-	      note: _react.PropTypes.number.isRequired,
-	      pianoView: _react.PropTypes.object.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  function PianoKey(props) {
-	    _classCallCheck(this, PianoKey);
-	
-	    _get(Object.getPrototypeOf(PianoKey.prototype), 'constructor', this).call(this, props);
-	    this.blackKeyNum = blackKeys[props.note % 12 + (props.note < 0 ? 12 : 0)];
-	    this.boundPianoActions = (0, _redux.bindActionCreators)(pianoActions, props.dispatch);
-	  }
-	
-	  _createClass(PianoKey, [{
-	    key: 'onClick',
-	    value: function onClick(event) {
-	      event.preventDefault();
-	      this.boundPianoActions.touchNote(this.props.note);
-	    }
-	  }, {
-	    key: 'isSelected',
-	    value: function isSelected(note) {
-	      var chordNotes = this.props.pianoView.chordNotes;
-	      var chordInversion = this.props.controls.chordInversion;
-	      if (chordInversion !== 0) {
-	        for (var inv = 1; inv <= Math.abs(chordInversion); inv++) {
-	          chordNotes = this.invertChord(this.props.controls.chordInversion, chordNotes);
-	        }
-	      }
-	      return chordNotes.indexOf(note) !== -1;
-	    }
-	  }, {
-	    key: 'invertChord',
-	    value: function invertChord(inversion, notes) {
-	      var changedNote;
-	      var modifiedNotes = notes.slice();
-	      if (inversion > 0) {
-	        var first = modifiedNotes.shift();
-	        changedNote = first + 12;
-	        if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
-	          console.log('inversion out of bounds');
-	          return notes;
-	        }
-	        modifiedNotes.push(changedNote);
-	      } else {
-	        var last = modifiedNotes.pop();
-	        changedNote = last - 12;
-	        if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
-	          console.log('inversion out of bounds');
-	          return notes;
-	        }
-	        modifiedNotes.splice(0, 0, changedNote);
-	      }
-	      return modifiedNotes;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this = this;
-	
-	      var cls = 'key' + (this.blackKeyNum ? ' black black' + this.blackKeyNum : '');
-	      if (this.isSelected(this.props.note)) {
-	        cls += ' pressed';
-	      }
-	      return _react2['default'].createElement('div', { onClick: function () {
-	          for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	            args[_key] = arguments[_key];
-	          }
-	
-	          return _this.onClick.apply(_this, args);
-	        }, className: cls });
-	    }
-	  }]);
-	
-	  return PianoKey;
-	})(_react.Component);
-	
-	exports.PianoKey = PianoKey;
-	
-	function select(state) {
-	  return {
-	    controls: state.controls,
-	    pianoView: state.pianoView
-	  };
-	}
-	
-	exports['default'] = (0, _reactRedux.connect)(select)(PianoKey);
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.touchNote = touchNote;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	var _libConstantsActionTypes = __webpack_require__(180);
-	
-	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
-	
-	var _chords = __webpack_require__(182);
-	
-	function touchNote(note) {
-	  return function (dispatch, getState) {
-	    var state = getState();
-	    dispatch({
-	      type: actionTypes.TOUCH_NOTE,
-	      note: note
-	    });
-	    dispatch((0, _chords.setChordNotes)({
-	      root: note,
-	      chordType: state.pianoView.chordType
-	    }));
-	  };
-	}
-
-/***/ },
-/* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _classnames = __webpack_require__(193);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
-	
-	var Error = (function (_Component) {
-	  _inherits(Error, _Component);
-	
-	  function Error() {
-	    _classCallCheck(this, Error);
-	
-	    _get(Object.getPrototypeOf(Error.prototype), 'constructor', this).apply(this, arguments);
-	  }
-	
-	  _createClass(Error, [{
-	    key: 'render',
-	    value: function render() {
-	      var ulClass = (0, _classnames2['default'])('notification-list');
-	      var liClass = (0, _classnames2['default'])('notification', 'error');
-	      return _react2['default'].createElement(
-	        'ul',
-	        { className: ulClass },
-	        _react2['default'].createElement(
-	          'li',
-	          { className: liClass },
-	          _react2['default'].createElement(
-	            'span',
-	            { className: 'text' },
-	            this.props.message
-	          )
-	        )
-	      );
-	    }
-	  }], [{
-	    key: 'propTypes',
-	    value: {
-	      message: _react.PropTypes.string.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  return Error;
-	})(_react.Component);
-	
-	exports['default'] = Error;
-	module.exports = exports['default'];
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2015 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	
-	(function () {
-		'use strict';
-	
-		function classNames () {
-	
-			var classes = '';
-	
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-	
-				var argType = typeof arg;
-	
-				if ('string' === argType || 'number' === argType) {
-					classes += ' ' + arg;
-	
-				} else if (Array.isArray(arg)) {
-					classes += ' ' + classNames.apply(null, arg);
-	
-				} else if ('object' === argType) {
-					for (var key in arg) {
-						if (arg.hasOwnProperty(key) && arg[key]) {
-							classes += ' ' + key;
-						}
-					}
-				}
-			}
-	
-			return classes.substr(1);
-		}
-	
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true){
-			// AMD. Register as an anonymous module.
-			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	
-	}());
-
-
-/***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _classnames = __webpack_require__(193);
-	
-	var _classnames2 = _interopRequireDefault(_classnames);
-	
-	var _libUtilNotes = __webpack_require__(186);
-	
-	var ExportedData = (function (_Component) {
-	  _inherits(ExportedData, _Component);
-	
-	  function ExportedData() {
-	    _classCallCheck(this, ExportedData);
-	
-	    _get(Object.getPrototypeOf(ExportedData.prototype), 'constructor', this).apply(this, arguments);
-	  }
-	
-	  _createClass(ExportedData, [{
-	    key: 'formatChords',
-	    value: function formatChords(part, index, formatter) {
-	      var chords = [];
-	      part.forEach(function (data) {
-	        chords.push(formatter(data));
-	      });
-	      return index + 1 + '. ' + chords.join(' >>> ');
-	    }
-	  }, {
-	    key: 'formatData',
-	    value: function formatData() {
-	      var _this = this;
-	
-	      var output = [];
-	
-	      this.props.data.parts.forEach(function (part, index) {
-	        output.push(_this.formatChords(part, index, function (data) {
-	          return (0, _libUtilNotes.noteName)(data.chordRoot) + data.chordType;
-	        }));
-	      });
-	
-	      output.push('');
-	
-	      this.props.data.parts.forEach(function (part, index) {
-	        output.push(_this.formatChords(part, index, function (data) {
-	          function getName(note) {
-	            var name = (0, _libUtilNotes.noteName)(note);
-	            if (note === data.chordRoot) {
-	              name = '[' + name + ']';
-	            }
-	            return name;
-	          }
-	          return data.chordNotes.map(getName).join(' ');
-	        }));
-	      });
-	
-	      return output.join('\n');
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
-	
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: (0, _classnames2['default'])('overlay') },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: (0, _classnames2['default'])('overlay-panel') },
-	          _react2['default'].createElement(
-	            'p',
-	            null,
-	            _react2['default'].createElement('textarea', { readOnly: true, value: this.formatData() })
-	          ),
-	          _react2['default'].createElement(
-	            'p',
-	            null,
-	            _react2['default'].createElement(
-	              'button',
-	              { onClick: function () {
-	                  return _this2.props.clearData();
-	                } },
-	              'OK'
-	            )
-	          )
-	        )
-	      );
-	    }
-	  }], [{
-	    key: 'propTypes',
-	    value: {
-	      clearData: _react.PropTypes.func.isRequired,
-	      data: _react.PropTypes.object.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  return ExportedData;
-	})(_react.Component);
-	
-	exports['default'] = ExportedData;
-	module.exports = exports['default'];
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.createReduxStore = createReduxStore;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _redux = __webpack_require__(166);
-	
-	var _reduxThunk = __webpack_require__(196);
-	
-	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-	
-	var _libUtilStateStorage = __webpack_require__(197);
-	
-	var storage = _interopRequireWildcard(_libUtilStateStorage);
-	
-	var _reducers = __webpack_require__(199);
-	
-	var _reducers2 = _interopRequireDefault(_reducers);
-	
-	function logger(_ref) {
-	  var getState = _ref.getState;
-	
-	  return function (next) {
-	    return function (action) {
-	      console.info('redux: dispatching', action);
-	      var result = next(action);
-	      console.log('redux: state after', getState());
-	      return result;
-	    };
-	  };
-	}
-	
-	var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2['default'], logger)(_redux.createStore);
-	
-	function createReduxStore() {
-	  var store = createStoreWithMiddleware(_reducers2['default'], storage.restoreState());
-	
-	  if (false) {
-	    // Enable Webpack hot module replacement for reducers
-	    // See: https://github.com/rackt/react-redux/releases/tag/v2.0.0
-	    module.hot.accept('lib/reducers', function () {
-	      var nextRootReducer = require('lib/reducers');
-	      store.replaceReducer(nextRootReducer);
-	    });
-	  }
-	
-	  store.subscribe(function () {
-	    return storage.saveState(store.getState());
-	  });
-	
-	  return store;
-	}
-	
-	exports['default'] = createReduxStore();
-
-/***/ },
-/* 196 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	exports['default'] = thunkMiddleware;
-	
-	function thunkMiddleware(_ref) {
-	  var dispatch = _ref.dispatch;
-	  var getState = _ref.getState;
-	
-	  return function (next) {
-	    return function (action) {
-	      return typeof action === 'function' ? action(dispatch, getState) : next(action);
-	    };
-	  };
-	}
-	
-	module.exports = exports['default'];
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.restoreState = restoreState;
-	exports.saveState = saveState;
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _rison = __webpack_require__(198);
+	var _rison = __webpack_require__(181);
 	
 	var _rison2 = _interopRequireDefault(_rison);
 	
-	var stateVersion = 1;
-	var storageKey = 'music-arranger';
+	var _libConstantsActionTypes = __webpack_require__(179);
 	
-	function restoreState() {
-	  var savedState = window.localStorage.getItem(storageKey);
-	  if (savedState) {
-	    // when the saved version is older than the application version
-	    // I guess maybe we could either
-	    // 1) throw away the old state
-	    // 2) try to migrate the old format to the new format
-	    try {
-	      savedState = _rison2['default'].decode(savedState);
-	    } catch (e) {
-	      console.error('could not decode state from localStorage:', e);
-	      return;
-	    }
-	    console.log('loading saved state at version', savedState.version);
-	    return savedState.state;
+	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
+	
+	var StateStorage = (function () {
+	  function StateStorage() {
+	    _classCallCheck(this, StateStorage);
+	
+	    this.stateVersion = 1;
+	    this.storageKey = 'music-arranger';
+	    this.isListeningToPopState = false;
 	  }
-	}
 	
-	function saveState(state) {
-	  window.localStorage.setItem(storageKey, _rison2['default'].encode({
-	    version: stateVersion,
-	    state: state
-	  }));
-	}
+	  _createClass(StateStorage, [{
+	    key: 'restoreState',
+	    value: function restoreState() {
+	      // when the saved version is older than the application version
+	      // I guess maybe we could either
+	      // 1) throw away the old state
+	      // 2) try to migrate the old format to the new format
+	
+	      var savedState = undefined;
+	      var stateQuery = window.location.search.match(/\?s=(.+)/);
+	      if (stateQuery) {
+	        console.log('restoring state from query string');
+	        savedState = decodeURIComponent(stateQuery[1]);
+	      } else {
+	        savedState = window.localStorage.getItem(this.storageKey);
+	        if (savedState) {
+	          console.log('restoring state from localStorage');
+	        }
+	      }
+	      if (savedState) {
+	        savedState = this.decodeState(savedState);
+	        if (!savedState) {
+	          return;
+	        }
+	        console.log('loading saved state at version', savedState.version);
+	        return savedState.state;
+	      }
+	    }
+	  }, {
+	    key: 'saveState',
+	    value: function saveState(_ref) {
+	      var dispatch = _ref.dispatch;
+	      var state = _ref.state;
+	
+	      var encodedState = this.encodeState(state);
+	      window.localStorage.setItem(this.storageKey, encodedState);
+	      this.pushState({ state: state, encodedState: encodedState, dispatch: dispatch });
+	    }
+	  }, {
+	    key: 'encodeState',
+	    value: function encodeState(state) {
+	      return _rison2['default'].encode({
+	        version: this.stateVersion,
+	        state: state
+	      });
+	    }
+	  }, {
+	    key: 'decodeState',
+	    value: function decodeState(encodedState) {
+	      try {
+	        return _rison2['default'].decode(encodedState);
+	      } catch (e) {
+	        console.error('could not decode state from localStorage:', e);
+	        return;
+	      }
+	    }
+	  }, {
+	    key: 'pushState',
+	    value: function pushState(_ref2) {
+	      var state = _ref2.state;
+	      var encodedState = _ref2.encodedState;
+	      var dispatch = _ref2.dispatch;
+	
+	      if (window.history && window.history.pushState) {
+	        window.history.pushState(state, '', window.location.pathname + '?s=' + encodedState);
+	        if (!this.isListeningToPopState) {
+	          this.listenToPopState(dispatch);
+	        }
+	        if (window.location.href.length > 2083) {
+	          // Really, this is just a problem in IE but perhaps some upstream
+	          // proxies would have issues as well (like GitUHub's CDN maybe,
+	          // just a guess)
+	          console.warn('this URL may not load in some browsers');
+	        }
+	      } else {
+	        console.log('history.pushState is not available');
+	      }
+	    }
+	  }, {
+	    key: 'listenToPopState',
+	    value: function listenToPopState(dispatch) {
+	      window.addEventListener('popstate', function (e) {
+	        dispatch({
+	          type: actionTypes.RESTORE_STATE,
+	          state: e.state
+	        });
+	      });
+	      this.isListeningToPopState = true;
+	    }
+	  }]);
+	
+	  return StateStorage;
+	})();
+	
+	exports.StateStorage = StateStorage;
+	
+	var stateStorage = new StateStorage();
+	exports['default'] = stateStorage;
 
 /***/ },
-/* 198 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Uses CommonJS, AMD or browser globals to create a module.
@@ -23254,7 +21654,1367 @@
 
 
 /***/ },
-/* 199 */
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.setCurrentPart = setCurrentPart;
+	exports.setPosition = setPosition;
+	exports.clearExportedData = clearExportedData;
+	exports.setExportedData = setExportedData;
+	exports.setChordNotes = setChordNotes;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	var _libConstantsActionTypes = __webpack_require__(179);
+	
+	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
+	
+	var _libConstantsPiano = __webpack_require__(183);
+	
+	var _libUtilStateStorage = __webpack_require__(180);
+	
+	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
+	
+	function setCurrentPart(partNum) {
+	  return function (dispatch, getState) {
+	    dispatch({
+	      type: actionTypes.SET_CURRENT_PART,
+	      part: partNum
+	    });
+	    dispatchCurrentChords(dispatch, getState());
+	  };
+	}
+	
+	function setPosition(partNum, position) {
+	  return function (dispatch, getState) {
+	    dispatch({
+	      type: actionTypes.SET_CURRENT_PART,
+	      part: partNum
+	    });
+	    dispatch({
+	      type: actionTypes.SET_CURRENT_POSITION,
+	      position: position
+	    });
+	    dispatchCurrentChords(dispatch, getState());
+	
+	    _libUtilStateStorage2['default'].saveState({
+	      dispatch: dispatch,
+	      state: getState()
+	    });
+	  };
+	}
+	
+	function dispatchCurrentChords(dispatch, state) {
+	  var arrangement = state.arrangement;
+	  var part = arrangement.parts[arrangement.currentPart] || [];
+	  var posIndex = arrangement.currentPosition;
+	  var position = part[posIndex] || {};
+	
+	  var chordRoot = position.chordRoot;
+	  var chordNotes = position.chordNotes;
+	
+	  if (typeof chordRoot === 'undefined') {
+	    if (posIndex > 0 && part[posIndex - 1] === undefined) {
+	      // This means they clicked a square out of order.
+	      // Among other weirdness, this would break rison decoding.
+	      console.log('cannot add a chord out of order in the arrangement');
+	      return;
+	    }
+	    // When selecting song parts that don't exist yet,
+	    // this fills in a default chord just to indicate
+	    // that the action created a new part.
+	    chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
+	    var chordNotesAction = setChordNotes({
+	      root: chordRoot,
+	      chordType: state.pianoView.chordType
+	    });
+	    chordNotes = chordNotesAction.chordNotes;
+	  }
+	
+	  var chordType = position.chordType !== undefined ? position.chordType : state.controls.chordType;
+	  var chordInversion = position.chordInversion !== undefined ? position.chordInversion : state.controls.chordInversion;
+	
+	  dispatch({
+	    type: actionTypes.TOUCH_NOTE,
+	    note: chordRoot
+	  });
+	  dispatch({
+	    type: actionTypes.SET_CHORD_NOTES,
+	    chordNotes: chordNotes
+	  });
+	  dispatch({
+	    type: actionTypes.SET_CHORD_TYPE,
+	    chordType: chordType
+	  });
+	  dispatch({
+	    type: actionTypes.SET_CHORD_INVERSION,
+	    chordInversion: chordInversion
+	  });
+	}
+	
+	function clearExportedData() {
+	  return {
+	    type: actionTypes.CLEAR_EXPORTED_DATA
+	  };
+	}
+	
+	function setExportedData() {
+	  return function (dispatch, getState) {
+	    var state = getState();
+	    dispatch({
+	      type: actionTypes.SET_EXPORTED_DATA,
+	      exportedData: Object.assign({}, {
+	        parts: state.arrangement.parts
+	      })
+	    });
+	  };
+	}
+	
+	function setChordNotes(_ref) {
+	  var root = _ref.root;
+	  var _ref$chordType = _ref.chordType;
+	  var chordType = _ref$chordType === undefined ? 'M' : _ref$chordType;
+	
+	  var chordNotes = [];
+	  chordNotes.push(root);
+	  _libConstantsPiano.CHORD_MAP[chordType].forEach(function (sumBy) {
+	    chordNotes.push(root + sumBy);
+	  });
+	  return {
+	    type: actionTypes.SET_CHORD_NOTES,
+	    chordNotes: chordNotes
+	  };
+	}
+	
+	function _defaultChordRoot(previousPosition) {
+	  var root = null;
+	  if (previousPosition) {
+	    root = previousPosition.chordRoot + 2;
+	  }
+	  if (root === null || root > _libConstantsPiano.PIANO_KEY_END) {
+	    root = _libConstantsPiano.PIANO_KEY_START;
+	  }
+	  return root;
+	}
+
+/***/ },
+/* 183 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	var PIANO_KEY_START = -12;exports.PIANO_KEY_START = PIANO_KEY_START;
+	// low C
+	var PIANO_KEY_END = 13;exports.PIANO_KEY_END = PIANO_KEY_END;
+	// high C#
+	
+	var NOTE_NAMES = {
+	  0: 'C',
+	  1: 'C#',
+	  2: 'D',
+	  3: 'Eb',
+	  4: 'E',
+	  5: 'F',
+	  6: 'F#',
+	  7: 'G',
+	  8: 'Ab',
+	  9: 'A',
+	  10: 'Bb',
+	  11: 'B',
+	  12: 'C'
+	};
+	
+	exports.NOTE_NAMES = NOTE_NAMES;
+	// These are the steps you'd add to a root note to form each chord.
+	var CHORD_MAP = {
+	  '': [], // no chord
+	  'M': [4, 7],
+	  'm': [3, 7],
+	  'aug': [4, 8],
+	  'dim': [3, 6],
+	  'sus4': [5, 7],
+	  'sus2': [2, 7],
+	  '5': [7],
+	  '6': [4, 7, 9],
+	  'm6': [3, 7, 9],
+	  '7': [4, 7, 10],
+	  'M7': [4, 7, 11],
+	  'm7': [3, 7, 10]
+	};
+	exports.CHORD_MAP = CHORD_MAP;
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(159);
+	
+	var _redux = __webpack_require__(166);
+	
+	var _libActionsArrangement = __webpack_require__(182);
+	
+	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
+	
+	var _libComponentsArrangementPart = __webpack_require__(185);
+	
+	var _libComponentsArrangementPart2 = _interopRequireDefault(_libComponentsArrangementPart);
+	
+	var Arrangement = (function (_Component) {
+	  _inherits(Arrangement, _Component);
+	
+	  _createClass(Arrangement, null, [{
+	    key: 'propTypes',
+	    value: {
+	      arrangement: _react.PropTypes.object.isRequired,
+	      dispatch: _react.PropTypes.func.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  function Arrangement(props) {
+	    _classCallCheck(this, Arrangement);
+	
+	    _get(Object.getPrototypeOf(Arrangement.prototype), 'constructor', this).call(this, props);
+	    this.boundArrangement = (0, _redux.bindActionCreators)(arrangementActions, props.dispatch);
+	  }
+	
+	  _createClass(Arrangement, [{
+	    key: 'renderParts',
+	    value: function renderParts() {
+	      var parts = [];
+	      var partLength = this.props.arrangement.parts.length;
+	      for (var partNum = 0; partNum < partLength + 1; partNum++) {
+	        parts.push(_react2['default'].createElement(_libComponentsArrangementPart2['default'], {
+	          key: partNum,
+	          part: this.props.arrangement.parts[partNum] || [],
+	          partNum: partNum,
+	          setPosition: this.boundArrangement.setPosition }));
+	      }
+	      return parts;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        this.renderParts()
+	      );
+	    }
+	  }]);
+	
+	  return Arrangement;
+	})(_react.Component);
+	
+	exports.Arrangement = Arrangement;
+	
+	function select(state) {
+	  return {
+	    arrangement: state.arrangement
+	  };
+	}
+	
+	exports['default'] = (0, _reactRedux.connect)(select)(Arrangement);
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _libUtilNotes = __webpack_require__(186);
+	
+	var ArrangementPart = (function (_Component) {
+	  _inherits(ArrangementPart, _Component);
+	
+	  function ArrangementPart() {
+	    _classCallCheck(this, ArrangementPart);
+	
+	    _get(Object.getPrototypeOf(ArrangementPart.prototype), 'constructor', this).apply(this, arguments);
+	  }
+	
+	  _createClass(ArrangementPart, [{
+	    key: 'setPosition',
+	    value: function setPosition(event, position) {
+	      event.preventDefault();
+	      this.props.setPosition(this.props.partNum, position);
+	    }
+	  }, {
+	    key: 'renderChords',
+	    value: function renderChords() {
+	      var _this = this;
+	
+	      var empty = _react2['default'].createElement(
+	        'span',
+	        null,
+	        ' '
+	      );
+	      var chords = [];
+	
+	      var _loop = function (position) {
+	        var chordData = _this.props.part[position] || {};
+	        chords.push(_react2['default'].createElement(
+	          'a',
+	          { onClick: function (e) {
+	              return _this.setPosition(e, position);
+	            },
+	            href: '#', key: position },
+	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.noteName)(chordData.chordRoot) : empty
+	        ));
+	      };
+	
+	      for (var position = 0; position < 8; position++) {
+	        _loop(position);
+	      }
+	      return chords;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'arrangement' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'elements' },
+	          this.renderChords()
+	        ),
+	        _react2['default'].createElement('div', { className: 'clear' })
+	      );
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    value: {
+	      part: _react.PropTypes.array.isRequired,
+	      partNum: _react.PropTypes.number.isRequired,
+	      setPosition: _react.PropTypes.func.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  return ArrangementPart;
+	})(_react.Component);
+	
+	exports['default'] = ArrangementPart;
+	module.exports = exports['default'];
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.noteName = noteName;
+	
+	var _libConstantsPiano = __webpack_require__(183);
+	
+	function noteName(noteNum) {
+	  // Keep shifting until the note is in the 0-12 range so we can return its
+	  // name. There is probably a way better way to do this with magic math.
+	  var shift;
+	  if (noteNum < 0) {
+	    shift = function (num) {
+	      return num + 12;
+	    };
+	  } else {
+	    shift = function (num) {
+	      return num - 12;
+	    };
+	  }
+	
+	  var name;
+	  while (true) {
+	    name = _libConstantsPiano.NOTE_NAMES[noteNum];
+	    if (typeof name !== 'undefined') {
+	      return name;
+	    }
+	    noteNum = shift(noteNum);
+	  }
+	}
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(159);
+	
+	var _redux = __webpack_require__(166);
+	
+	var _libActionsApp = __webpack_require__(178);
+	
+	var appActions = _interopRequireWildcard(_libActionsApp);
+	
+	var _libActionsControls = __webpack_require__(188);
+	
+	var controlActions = _interopRequireWildcard(_libActionsControls);
+	
+	var _libActionsArrangement = __webpack_require__(182);
+	
+	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
+	
+	var Controls = (function (_Component) {
+	  _inherits(Controls, _Component);
+	
+	  _createClass(Controls, null, [{
+	    key: 'propTypes',
+	    value: {
+	      arrangement: _react.PropTypes.object.isRequired,
+	      controls: _react.PropTypes.object.isRequired,
+	      dispatch: _react.PropTypes.func.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  function Controls(props) {
+	    _classCallCheck(this, Controls);
+	
+	    _get(Object.getPrototypeOf(Controls.prototype), 'constructor', this).call(this, props);
+	    this.boundAppActions = (0, _redux.bindActionCreators)(appActions, props.dispatch);
+	    this.boundControlActions = (0, _redux.bindActionCreators)(controlActions, props.dispatch);
+	    this.boundArrangement = (0, _redux.bindActionCreators)(arrangementActions, props.dispatch);
+	  }
+	
+	  _createClass(Controls, [{
+	    key: 'changeChordType',
+	    value: function changeChordType(event) {
+	      event.preventDefault();
+	      this.boundControlActions.setChordType(event.currentTarget.value);
+	    }
+	  }, {
+	    key: 'changePart',
+	    value: function changePart(event) {
+	      event.preventDefault();
+	      this.boundArrangement.setCurrentPart(parseInt(event.currentTarget.value));
+	    }
+	  }, {
+	    key: 'invertDown',
+	    value: function invertDown(event) {
+	      event.preventDefault();
+	      this.boundControlActions.invertChord(-1);
+	    }
+	  }, {
+	    key: 'invertUp',
+	    value: function invertUp(event) {
+	      event.preventDefault();
+	      this.boundControlActions.invertChord(1);
+	    }
+	  }, {
+	    key: 'resetInversion',
+	    value: function resetInversion(event) {
+	      event.preventDefault();
+	      this.boundControlActions.resetChordInversion();
+	    }
+	  }, {
+	    key: 'renderPartSelector',
+	    value: function renderPartSelector() {
+	      var _this = this;
+	
+	      var options = [];
+	      var parts = this.props.arrangement.parts.slice();
+	      if (!parts.length) {
+	        // This will render 'Part 1' even when none exist. This should be
+	        // harmless since you can't change a one-item select box.
+	        parts.push(null);
+	      }
+	      parts.forEach(function (_, partNum) {
+	        options.push(_react2['default'].createElement(
+	          'option',
+	          { key: partNum, value: partNum },
+	          'Part ',
+	          partNum + 1
+	        ));
+	      });
+	      return _react2['default'].createElement(
+	        'select',
+	        { value: this.props.arrangement.currentPart,
+	          onChange: function () {
+	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	              args[_key] = arguments[_key];
+	            }
+	
+	            return _this.changePart.apply(_this, args);
+	          } },
+	        options
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      return _react2['default'].createElement(
+	        'div',
+	        { id: 'controls' },
+	        this.renderPartSelector(),
+	        _react2['default'].createElement(
+	          'span',
+	          null,
+	          'Chord:'
+	        ),
+	        _react2['default'].createElement(
+	          'select',
+	          { id: 'chord-select', value: this.props.controls.chordType,
+	            onChange: function () {
+	              for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	                args[_key2] = arguments[_key2];
+	              }
+	
+	              return _this2.changeChordType.apply(_this2, args);
+	            } },
+	          _react2['default'].createElement(
+	            'option',
+	            { value: '' },
+	            'None'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'M' },
+	            'Major'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'm' },
+	            'Minor'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'aug' },
+	            'Augmented'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'dim' },
+	            'Diminished'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'sus4' },
+	            'Sustained 4th'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'sus2' },
+	            'Sustained 2nd'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: '5' },
+	            'Fifth'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: '6' },
+	            'Sixth'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'm6' },
+	            'Minor 6th'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: '7' },
+	            'Seventh'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'M7' },
+	            'Major 7th'
+	          ),
+	          _react2['default'].createElement(
+	            'option',
+	            { value: 'm7' },
+	            'Minor 7th'
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { className: 'inverter', onClick: function (e) {
+	              return _this2.invertDown(e);
+	            } },
+	          'Invert Down'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: function (e) {
+	              return _this2.resetInversion(e);
+	            } },
+	          this.props.controls.chordInversion
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { className: 'inverter', onClick: function (e) {
+	              return _this2.invertUp(e);
+	            } },
+	          'Invert Up'
+	        ),
+	        _react2['default'].createElement(
+	          'span',
+	          null,
+	          'Arrangement:'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: function () {
+	              return _this2.boundArrangement.setExportedData();
+	            } },
+	          'Export'
+	        ),
+	        _react2['default'].createElement(
+	          'button',
+	          { onClick: function () {
+	              return _this2.boundAppActions.resetState();
+	            } },
+	          'Clear'
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return Controls;
+	})(_react.Component);
+	
+	exports.Controls = Controls;
+	
+	function select(state) {
+	  return {
+	    controls: state.controls,
+	    arrangement: state.arrangement
+	  };
+	}
+	
+	exports['default'] = (0, _reactRedux.connect)(select)(Controls);
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.setChordType = setChordType;
+	exports.invertChord = invertChord;
+	exports.resetChordInversion = resetChordInversion;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	var _libConstantsActionTypes = __webpack_require__(179);
+	
+	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
+	
+	var _libUtilStateStorage = __webpack_require__(180);
+	
+	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
+	
+	var _arrangement = __webpack_require__(182);
+	
+	function setChordType(chordType) {
+	  return function (dispatch, getState) {
+	    var state = getState();
+	    dispatch({
+	      type: actionTypes.SET_CHORD_TYPE,
+	      chordType: chordType
+	    });
+	    dispatch((0, _arrangement.setChordNotes)({
+	      root: state.pianoView.chordRoot,
+	      chordType: chordType
+	    }));
+	    _libUtilStateStorage2['default'].saveState({
+	      dispatch: dispatch,
+	      state: getState()
+	    });
+	  };
+	}
+	
+	function invertChord(increment) {
+	  return function (dispatch, getState) {
+	    var state = getState();
+	    dispatch({
+	      type: actionTypes.SET_CHORD_INVERSION,
+	      chordInversion: state.controls.chordInversion + increment
+	    });
+	    _libUtilStateStorage2['default'].saveState({
+	      dispatch: dispatch,
+	      state: getState()
+	    });
+	  };
+	}
+	
+	function resetChordInversion() {
+	  return function (dispatch, getState) {
+	    dispatch({
+	      type: actionTypes.SET_CHORD_INVERSION,
+	      chordInversion: 0
+	    });
+	    _libUtilStateStorage2['default'].saveState({
+	      dispatch: dispatch,
+	      state: getState()
+	    });
+	  };
+	}
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _libComponentsPianoKey = __webpack_require__(190);
+	
+	var _libComponentsPianoKey2 = _interopRequireDefault(_libComponentsPianoKey);
+	
+	var _libConstantsPiano = __webpack_require__(183);
+	
+	var Piano = (function (_Component) {
+	  _inherits(Piano, _Component);
+	
+	  function Piano(props) {
+	    _classCallCheck(this, Piano);
+	
+	    _get(Object.getPrototypeOf(Piano.prototype), 'constructor', this).call(this, props);
+	    this.keys = [];
+	    for (var i = _libConstantsPiano.PIANO_KEY_START; i <= _libConstantsPiano.PIANO_KEY_END; i++) {
+	      this.keys.push(_react2['default'].createElement(_libComponentsPianoKey2['default'], { key: i, note: i }));
+	    }
+	  }
+	
+	  _createClass(Piano, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { id: 'piano' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'keys' },
+	          this.keys
+	        ),
+	        _react2['default'].createElement('div', { className: 'clear' })
+	      );
+	    }
+	  }]);
+	
+	  return Piano;
+	})(_react.Component);
+	
+	exports['default'] = Piano;
+	module.exports = exports['default'];
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(159);
+	
+	var _redux = __webpack_require__(166);
+	
+	var _libActionsPiano = __webpack_require__(191);
+	
+	var pianoActions = _interopRequireWildcard(_libActionsPiano);
+	
+	var _libConstantsPiano = __webpack_require__(183);
+	
+	var blackKeys = {
+	  1: 1,
+	  3: 3,
+	  6: 1,
+	  8: 2,
+	  10: 3
+	};
+	
+	var PianoKey = (function (_Component) {
+	  _inherits(PianoKey, _Component);
+	
+	  _createClass(PianoKey, null, [{
+	    key: 'propTypes',
+	
+	    // TODO: should probably move a lot of this logic to <Piano> for speed.
+	
+	    value: {
+	      controls: _react.PropTypes.object.isRequired,
+	      dispatch: _react.PropTypes.func.isRequired,
+	      note: _react.PropTypes.number.isRequired,
+	      pianoView: _react.PropTypes.object.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  function PianoKey(props) {
+	    _classCallCheck(this, PianoKey);
+	
+	    _get(Object.getPrototypeOf(PianoKey.prototype), 'constructor', this).call(this, props);
+	    this.blackKeyNum = blackKeys[props.note % 12 + (props.note < 0 ? 12 : 0)];
+	    this.boundPianoActions = (0, _redux.bindActionCreators)(pianoActions, props.dispatch);
+	  }
+	
+	  _createClass(PianoKey, [{
+	    key: 'onClick',
+	    value: function onClick(event) {
+	      event.preventDefault();
+	      this.boundPianoActions.touchNote(this.props.note);
+	    }
+	  }, {
+	    key: 'isSelected',
+	    value: function isSelected(note) {
+	      var chordNotes = this.props.pianoView.chordNotes;
+	      var chordInversion = this.props.controls.chordInversion;
+	      if (chordInversion !== 0) {
+	        for (var inv = 1; inv <= Math.abs(chordInversion); inv++) {
+	          chordNotes = this.invertChord(this.props.controls.chordInversion, chordNotes);
+	        }
+	      }
+	      return chordNotes.indexOf(note) !== -1;
+	    }
+	  }, {
+	    key: 'invertChord',
+	    value: function invertChord(inversion, notes) {
+	      var changedNote;
+	      var modifiedNotes = notes.slice();
+	      if (inversion > 0) {
+	        var first = modifiedNotes.shift();
+	        changedNote = first + 12;
+	        if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
+	          console.log('inversion out of bounds');
+	          return notes;
+	        }
+	        modifiedNotes.push(changedNote);
+	      } else {
+	        var last = modifiedNotes.pop();
+	        changedNote = last - 12;
+	        if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
+	          console.log('inversion out of bounds');
+	          return notes;
+	        }
+	        modifiedNotes.splice(0, 0, changedNote);
+	      }
+	      return modifiedNotes;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this = this;
+	
+	      var cls = 'key' + (this.blackKeyNum ? ' black black' + this.blackKeyNum : '');
+	      if (this.isSelected(this.props.note)) {
+	        cls += ' pressed';
+	      }
+	      return _react2['default'].createElement('div', { onClick: function () {
+	          for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	          }
+	
+	          return _this.onClick.apply(_this, args);
+	        }, className: cls });
+	    }
+	  }]);
+	
+	  return PianoKey;
+	})(_react.Component);
+	
+	exports.PianoKey = PianoKey;
+	
+	function select(state) {
+	  return {
+	    controls: state.controls,
+	    pianoView: state.pianoView
+	  };
+	}
+	
+	exports['default'] = (0, _reactRedux.connect)(select)(PianoKey);
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.touchNote = touchNote;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	var _libConstantsActionTypes = __webpack_require__(179);
+	
+	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
+	
+	var _libUtilStateStorage = __webpack_require__(180);
+	
+	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
+	
+	var _arrangement = __webpack_require__(182);
+	
+	function touchNote(note) {
+	  return function (dispatch, getState) {
+	    var state = getState();
+	    dispatch({
+	      type: actionTypes.TOUCH_NOTE,
+	      note: note
+	    });
+	    dispatch((0, _arrangement.setChordNotes)({
+	      root: note,
+	      chordType: state.pianoView.chordType
+	    }));
+	    _libUtilStateStorage2['default'].saveState({
+	      dispatch: dispatch,
+	      state: getState()
+	    });
+	  };
+	}
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _classnames = __webpack_require__(193);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	var Error = (function (_Component) {
+	  _inherits(Error, _Component);
+	
+	  function Error() {
+	    _classCallCheck(this, Error);
+	
+	    _get(Object.getPrototypeOf(Error.prototype), 'constructor', this).apply(this, arguments);
+	  }
+	
+	  _createClass(Error, [{
+	    key: 'render',
+	    value: function render() {
+	      var ulClass = (0, _classnames2['default'])('notification-list');
+	      var liClass = (0, _classnames2['default'])('notification', 'error');
+	      return _react2['default'].createElement(
+	        'ul',
+	        { className: ulClass },
+	        _react2['default'].createElement(
+	          'li',
+	          { className: liClass },
+	          _react2['default'].createElement(
+	            'span',
+	            { className: 'text' },
+	            this.props.message
+	          )
+	        )
+	      );
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    value: {
+	      message: _react.PropTypes.string.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  return Error;
+	})(_react.Component);
+	
+	exports['default'] = Error;
+	module.exports = exports['default'];
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2015 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	
+	(function () {
+		'use strict';
+	
+		function classNames () {
+	
+			var classes = '';
+	
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+	
+				var argType = typeof arg;
+	
+				if ('string' === argType || 'number' === argType) {
+					classes += ' ' + arg;
+	
+				} else if (Array.isArray(arg)) {
+					classes += ' ' + classNames.apply(null, arg);
+	
+				} else if ('object' === argType) {
+					for (var key in arg) {
+						if (arg.hasOwnProperty(key) && arg[key]) {
+							classes += ' ' + key;
+						}
+					}
+				}
+			}
+	
+			return classes.substr(1);
+		}
+	
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true){
+			// AMD. Register as an anonymous module.
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	
+	}());
+
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _classnames = __webpack_require__(193);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	var _libUtilNotes = __webpack_require__(186);
+	
+	var ExportedData = (function (_Component) {
+	  _inherits(ExportedData, _Component);
+	
+	  function ExportedData() {
+	    _classCallCheck(this, ExportedData);
+	
+	    _get(Object.getPrototypeOf(ExportedData.prototype), 'constructor', this).apply(this, arguments);
+	  }
+	
+	  _createClass(ExportedData, [{
+	    key: 'formatChords',
+	    value: function formatChords(part, index, formatter) {
+	      var chords = [];
+	      part.forEach(function (data) {
+	        chords.push(formatter(data));
+	      });
+	      return index + 1 + '. ' + chords.join(' >>> ');
+	    }
+	  }, {
+	    key: 'formatData',
+	    value: function formatData() {
+	      var _this = this;
+	
+	      var output = [];
+	
+	      this.props.data.parts.forEach(function (part, index) {
+	        output.push(_this.formatChords(part, index, function (data) {
+	          return (0, _libUtilNotes.noteName)(data.chordRoot) + data.chordType;
+	        }));
+	      });
+	
+	      output.push('');
+	
+	      this.props.data.parts.forEach(function (part, index) {
+	        output.push(_this.formatChords(part, index, function (data) {
+	          function getName(note) {
+	            var name = (0, _libUtilNotes.noteName)(note);
+	            if (note === data.chordRoot) {
+	              name = '[' + name + ']';
+	            }
+	            return name;
+	          }
+	          return data.chordNotes.map(getName).join(' ');
+	        }));
+	      });
+	
+	      return output.join('\n');
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: (0, _classnames2['default'])('overlay') },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: (0, _classnames2['default'])('overlay-panel') },
+	          _react2['default'].createElement(
+	            'p',
+	            null,
+	            _react2['default'].createElement('textarea', { readOnly: true, value: this.formatData() })
+	          ),
+	          _react2['default'].createElement(
+	            'p',
+	            null,
+	            _react2['default'].createElement(
+	              'button',
+	              { onClick: function () {
+	                  return _this2.props.clearData();
+	                } },
+	              'OK'
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    value: {
+	      clearData: _react.PropTypes.func.isRequired,
+	      data: _react.PropTypes.object.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  return ExportedData;
+	})(_react.Component);
+	
+	exports['default'] = ExportedData;
+	module.exports = exports['default'];
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.createReduxStore = createReduxStore;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _redux = __webpack_require__(166);
+	
+	var _reduxThunk = __webpack_require__(196);
+	
+	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+	
+	var _libUtilStateStorage = __webpack_require__(180);
+	
+	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
+	
+	var _reducers = __webpack_require__(197);
+	
+	var _reducers2 = _interopRequireDefault(_reducers);
+	
+	function logger(_ref) {
+	  var getState = _ref.getState;
+	
+	  return function (next) {
+	    return function (action) {
+	      console.info('redux: dispatching', action);
+	      var result = next(action);
+	      console.log('redux: state after', getState());
+	      return result;
+	    };
+	  };
+	}
+	
+	var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2['default'], logger)(_redux.createStore);
+	
+	function createReduxStore() {
+	  var store = createStoreWithMiddleware(_reducers2['default'], _libUtilStateStorage2['default'].restoreState());
+	
+	  if (false) {
+	    // Enable Webpack hot module replacement for reducers
+	    // See: https://github.com/rackt/react-redux/releases/tag/v2.0.0
+	    module.hot.accept('lib/reducers', function () {
+	      var nextRootReducer = require('lib/reducers');
+	      store.replaceReducer(nextRootReducer);
+	    });
+	  }
+	
+	  return store;
+	}
+	
+	exports['default'] = createReduxStore();
+
+/***/ },
+/* 196 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports['default'] = thunkMiddleware;
+	
+	function thunkMiddleware(_ref) {
+	  var dispatch = _ref.dispatch;
+	  var getState = _ref.getState;
+	
+	  return function (next) {
+	    return function (action) {
+	      return typeof action === 'function' ? action(dispatch, getState) : next(action);
+	    };
+	  };
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23267,19 +23027,19 @@
 	
 	var _redux = __webpack_require__(166);
 	
-	var _app = __webpack_require__(200);
+	var _app = __webpack_require__(198);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
-	var _controls = __webpack_require__(201);
+	var _controls = __webpack_require__(199);
 	
 	var _controls2 = _interopRequireDefault(_controls);
 	
-	var _arrangement = __webpack_require__(202);
+	var _arrangement = __webpack_require__(200);
 	
 	var _arrangement2 = _interopRequireDefault(_arrangement);
 	
-	var _pianoView = __webpack_require__(203);
+	var _pianoView = __webpack_require__(201);
 	
 	var _pianoView2 = _interopRequireDefault(_pianoView);
 	
@@ -23294,7 +23054,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 200 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23306,13 +23066,12 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libConstantsActionTypes = __webpack_require__(180);
+	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
 	
 	var initialAppState = {
-	  error: null,
-	  status: null
+	  error: null
 	};
 	
 	exports.initialAppState = initialAppState;
@@ -23321,13 +23080,11 @@
 	  switch (action.type) {
 	    case actionTypes.RESET_STATE:
 	      return initialAppState;
+	    case actionTypes.RESTORE_STATE:
+	      return action.state.app;
 	    case actionTypes.APP_ERROR:
 	      return Object.assign({}, state, {
 	        error: action.error
-	      });
-	    case actionTypes.SET_STATUS:
-	      return Object.assign({}, state, {
-	        status: action.status
 	      });
 	    default:
 	      return state || initialAppState;
@@ -23335,7 +23092,7 @@
 	}
 
 /***/ },
-/* 201 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23347,7 +23104,7 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libConstantsActionTypes = __webpack_require__(180);
+	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
 	
@@ -23362,6 +23119,8 @@
 	  switch (action.type) {
 	    case actionTypes.RESET_STATE:
 	      return initialControlsState;
+	    case actionTypes.RESTORE_STATE:
+	      return action.state.controls;
 	    case actionTypes.SET_CHORD_INVERSION:
 	      return Object.assign({}, state, {
 	        chordInversion: action.chordInversion
@@ -23376,7 +23135,7 @@
 	}
 
 /***/ },
-/* 202 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23388,7 +23147,7 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libConstantsActionTypes = __webpack_require__(180);
+	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
 	
@@ -23407,6 +23166,8 @@
 	  switch (action.type) {
 	    case actionTypes.RESET_STATE:
 	      return initialArrangementState;
+	    case actionTypes.RESTORE_STATE:
+	      return action.state.arrangement;
 	    case actionTypes.SET_EXPORTED_DATA:
 	      return Object.assign({}, state, {
 	        exportedData: action.exportedData
@@ -23458,7 +23219,7 @@
 	  // Returns a new part merged into the current position of state.parts.
 	  //
 	  var part = (state.parts[state.currentPart] || []).slice();
-	  var position = part[state.currentPosition] || {};
+	  var position = Object.assign({}, part[state.currentPosition] || {});
 	  var mergedData = Object.assign({}, position, newData);
 	  part[state.currentPosition] = mergedData;
 	
@@ -23468,7 +23229,7 @@
 	}
 
 /***/ },
-/* 203 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23480,7 +23241,7 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libConstantsActionTypes = __webpack_require__(180);
+	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
 	
@@ -23496,6 +23257,8 @@
 	  switch (action.type) {
 	    case actionTypes.RESET_STATE:
 	      return initialPianoViewState;
+	    case actionTypes.RESTORE_STATE:
+	      return action.state.pianoView;
 	    case actionTypes.SET_CHORD_TYPE:
 	      return Object.assign({}, state, {
 	        chordType: action.chordType

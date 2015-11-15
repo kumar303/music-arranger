@@ -52,7 +52,13 @@ export class Controls extends Component {
 
   renderPartSelector() {
     var options = [];
-    this.props.arrangement.parts.forEach((data, partNum) => {
+    let parts = this.props.arrangement.parts.slice();
+    if (!parts.length) {
+      // This will render 'Part 1' even when none exist. This should be
+      // harmless since you can't change a one-item select box.
+      parts.push(null);
+    }
+    parts.forEach((_, partNum) => {
       options.push(
         <option key={partNum} value={partNum}>Part {partNum + 1}</option>
       );
@@ -69,12 +75,6 @@ export class Controls extends Component {
     return (
       <div id="controls">
         {this.renderPartSelector()}
-        <button onClick={() => this.boundArrangement.setExportedData()}>
-          Export Data
-        </button>
-        <button onClick={() => this.boundAppActions.resetState()}>
-          Clear Data
-        </button>
         <span>Chord:</span>
         <select id="chord-select" value={this.props.controls.chordType}
             onChange={(...args) => this.changeChordType(...args)}>
@@ -100,6 +100,13 @@ export class Controls extends Component {
         </button>
         <button className="inverter" onClick={(e) => this.invertUp(e)}>
           Invert Up
+        </button>
+        <span>Arrangement:</span>
+        <button onClick={() => this.boundArrangement.setExportedData()}>
+          Export
+        </button>
+        <button onClick={() => this.boundAppActions.resetState()}>
+          Clear
         </button>
       </div>
     );

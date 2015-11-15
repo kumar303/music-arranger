@@ -1,6 +1,7 @@
 import * as actionTypes from 'lib/constants/action-types';
 
-import { setChordNotes } from './chords';
+import stateStorage from 'lib/util/state-storage';
+import { setChordNotes } from './arrangement';
 
 
 export function setChordType(chordType) {
@@ -14,6 +15,10 @@ export function setChordType(chordType) {
       root: state.pianoView.chordRoot,
       chordType: chordType,
     }));
+    stateStorage.saveState({
+      dispatch: dispatch,
+      state: getState(),
+    });
   };
 }
 
@@ -25,13 +30,23 @@ export function invertChord(increment) {
       type: actionTypes.SET_CHORD_INVERSION,
       chordInversion: state.controls.chordInversion + increment,
     });
+    stateStorage.saveState({
+      dispatch: dispatch,
+      state: getState(),
+    });
   };
 }
 
 
 export function resetChordInversion() {
-  return {
-    type: actionTypes.SET_CHORD_INVERSION,
-    chordInversion: 0,
+  return (dispatch, getState) => {
+    dispatch({
+      type: actionTypes.SET_CHORD_INVERSION,
+      chordInversion: 0,
+    });
+    stateStorage.saveState({
+      dispatch: dispatch,
+      state: getState(),
+    });
   };
 }

@@ -1,7 +1,11 @@
 import * as actionTypes from 'lib/constants/action-types';
 
-import { setChordNotes } from './chords';
-import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
+import {
+  CHORD_MAP,
+  PIANO_KEY_START,
+  PIANO_KEY_END,
+} from 'lib/constants/piano';
+import stateStorage from 'lib/util/state-storage';
 
 
 export function setCurrentPart(partNum) {
@@ -26,6 +30,11 @@ export function setPosition(partNum, position) {
       position: position,
     });
     dispatchCurrentChords(dispatch, getState());
+
+    stateStorage.saveState({
+      dispatch: dispatch,
+      state: getState(),
+    });
   };
 }
 
@@ -98,6 +107,19 @@ export function setExportedData() {
         parts: state.arrangement.parts,
       }),
     });
+  };
+}
+
+
+export function setChordNotes({root, chordType='M'}) {
+  let chordNotes = [];
+  chordNotes.push(root);
+  CHORD_MAP[chordType].forEach((sumBy) => {
+    chordNotes.push(root + sumBy);
+  });
+  return {
+    type: actionTypes.SET_CHORD_NOTES,
+    chordNotes: chordNotes,
   };
 }
 
