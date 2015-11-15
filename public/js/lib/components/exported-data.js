@@ -43,6 +43,10 @@ export default class ExportedData extends Component {
       }));
     });
 
+    output.push('');
+    output.push('Arrangement URL:');
+    output.push(window.location.href);
+
     return output.join('\n');
   }
 
