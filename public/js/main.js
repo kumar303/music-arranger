@@ -5,8 +5,18 @@ import { Provider } from 'react-redux';
 import App from 'lib/components/app';
 import dataStore from 'lib/data-store';
 
+var extras = [];
+if (module.hot) {
+  console.log('Adding redux dev-tools to app');
+  var DevTools = require('lib/components/dev-tools');
+  extras.push(<DevTools/>);
+}
+
 render((
   <Provider store={dataStore}>
-    <App/>
+    <div>
+      <App/>
+      {extras}
+    </div>
   </Provider>
 ), document.getElementById('app'));

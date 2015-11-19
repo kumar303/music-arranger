@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
 import stateStorage from 'lib/util/state-storage';
@@ -14,15 +14,29 @@ function logger({ getState }) {
   };
 }
 
-const createStoreWithMiddleware = applyMiddleware(
-  thunk,
-  logger
-)(createStore);
+
+var storeParts = [
+  applyMiddleware(thunk, logger),
+];
+
+if (module.hot) {
+  console.log('Adding redux dev-tools to data store');
+  let persistState = require('redux-devtools').persistState;
+  let DevTools = require('lib/components/dev-tools');
+
+  storeParts.push(DevTools.instrument());
+  storeParts.push(persistState(
+    window.location.href.match(
+      /[?&]debug_session=([^&]+)\b/
+    )
+  ));
+}
+
+const finalCreateStore = compose(...storeParts)(createStore);
 
 
 export function createReduxStore() {
-  const store = createStoreWithMiddleware(rootReducer,
-                                          stateStorage.restoreState());
+  const store = finalCreateStore(rootReducer, stateStorage.restoreState());
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers

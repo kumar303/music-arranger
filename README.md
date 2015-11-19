@@ -48,16 +48,21 @@ For faster tests you can run tests continuously as you edit files:
 
     grunt watch-test
 
-## Developing With The Hot Reloader
+## Developing With Hotness
 
-The hot reloading server will make changes appear instantly on the page as you
-edit React component code. It's pretty hot! Run it like this:
+For rapid development there is a special server you can use.
+This configures hot module reloading which will instantly show changes to your
+app as you save files. It will also activate the
+[redux-devtools](https://github.com/gaearon/redux-devtools)
+panel which lets you step through time as state changes are
+dispatched to your app.
+Run it like this:
 
     grunt serve
 
 Open:
 
-    http://localhost:8080/webpack-dev-server/
+    http://localhost:8080/webpack-dev-server/?debug_session=k
 
 ## Publishing To Github Pages
 
