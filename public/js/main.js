@@ -9,7 +9,7 @@ var extras = [];
 if (module.hot) {
   console.log('Adding redux dev-tools to app');
   var DevTools = require('lib/components/dev-tools');
-  extras.push(<DevTools/>);
+  extras.push(<DevTools key="dev-tools" />);
 }
 
 render((
