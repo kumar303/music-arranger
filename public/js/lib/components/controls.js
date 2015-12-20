@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as appActions from 'lib/actions/app';
 import * as controlActions from 'lib/actions/controls';
 import * as arrangementActions from 'lib/actions/arrangement';
+import { CHORD_MAP_NAMES } from 'lib/constants/piano';
 
 
 export class Controls extends Component {
@@ -74,6 +75,9 @@ export class Controls extends Component {
   }
 
   render() {
+    let chordSelectOptions = CHORD_MAP_NAMES.map((chord) => {
+      return <option key={chord.key} value={chord.key}>{chord.name}</option>;
+    });
     return (
       <div id="controls">
         {this.renderPartSelector()}
@@ -81,19 +85,7 @@ export class Controls extends Component {
         <div className="select-holder">
           <select id="chord-select" value={this.props.controls.chordType}
               onChange={(...args) => this.changeChordType(...args)}>
-            <option value="">None</option>
-            <option value="M">Major</option>
-            <option value="m">Minor</option>
-            <option value="aug">Augmented</option>
-            <option value="dim">Diminished</option>
-            <option value="sus4">Sustained 4th</option>
-            <option value="sus2">Sustained 2nd</option>
-            <option value="5">Fifth</option>
-            <option value="6">Sixth</option>
-            <option value="m6">Minor 6th</option>
-            <option value="7">Seventh</option>
-            <option value="M7">Major 7th</option>
-            <option value="m7">Minor 7th</option>
+            {chordSelectOptions}
           </select>
         </div>
         <span>Invert:</span>
