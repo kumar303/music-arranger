@@ -32,6 +32,7 @@ export const CHORD_MAP = {
   '7': [4, 7, 10],
   'M7': [4, 7, 11],
   'm7': [3, 7, 10],
+  '9': [4, 7, 10, 14],
 };
 
 // FIXME: combine this with CHORD_MAP and refactor everything that uses it.
@@ -49,4 +50,5 @@ export const CHORD_MAP_NAMES = [
   {key: '7', name: 'Seventh', map: [4, 7, 10]},
   {key: 'M7', name:'Major 7th', map: [4, 7, 11]},
   {key: 'm7', name: 'Minor 7th', map: [3, 7, 10]},
+  {key: '9', name: 'Ninth', map: [4, 7, 10, 14]},
 ];
