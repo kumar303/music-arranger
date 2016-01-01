@@ -34,6 +34,7 @@ export const CHORD_MAP = {
   'm7': [3, 7, 10],
   '9': [4, 7, 10, 14],
   '9b5': [4, 6, 10, 14],
+  'm9': [3, 7, 10, 14],
 };
 
 // FIXME: combine this with CHORD_MAP and refactor everything that uses it.
@@ -54,4 +55,5 @@ export const CHORD_MAP_NAMES = [
   {key: '9', name: 'Ninth', map: [4, 7, 10, 14]},
   // This is a 7 Flat 5 with a ninth added
   {key: '9b5', name: 'Nine Flat 5', map: [4, 6, 10, 14]},
+  {key: 'm9', name: 'Minor 9th', map: ['TODO']},
 ];
