@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import * as pianoActions from 'lib/actions/piano';
-import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
+import { invertChord } from 'lib/util/notes';
 
 const blackKeys = {
   1: 1,
@@ -38,37 +38,9 @@ export class PianoKey extends Component {
 
   isSelected(note) {
     let chordNotes = this.props.pianoView.chordNotes;
-    let chordInversion = this.props.controls.chordInversion;
-    if (chordInversion !== 0) {
-      for (let inv=1; inv <= Math.abs(chordInversion); inv++) {
-        chordNotes = this.invertChord(this.props.controls.chordInversion,
-                                      chordNotes);
-      }
-    }
+    chordNotes = invertChord(this.props.controls.chordInversion,
+                             chordNotes);
     return chordNotes.indexOf(note) !== -1;
-  }
-
-  invertChord(inversion, notes) {
-    var changedNote;
-    var modifiedNotes = notes.slice();
-    if (inversion > 0) {
-      var first = modifiedNotes.shift();
-      changedNote = first + 12;
-      if (changedNote > PIANO_KEY_END) {
-        console.log('inversion out of bounds');
-        return notes;
-      }
-      modifiedNotes.push(changedNote);
-    } else {
-      var last = modifiedNotes.pop();
-      changedNote = last - 12;
-      if (changedNote < PIANO_KEY_START) {
-        console.log('inversion out of bounds');
-        return notes;
-      }
-      modifiedNotes.splice(0, 0, changedNote);
-    }
-    return modifiedNotes;
   }
 
   render() {

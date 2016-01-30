@@ -64,10 +64,22 @@
 	
 	var _libDataStore2 = _interopRequireDefault(_libDataStore);
 	
+	var extras = [];
+	if (false) {
+	  console.log('Adding redux dev-tools to app');
+	  var DevTools = require('lib/components/dev-tools');
+	  extras.push(_react2['default'].createElement(DevTools, { key: 'dev-tools' }));
+	}
+	
 	(0, _reactDom.render)(_react2['default'].createElement(
 	  _reactRedux.Provider,
 	  { store: _libDataStore2['default'] },
-	  _react2['default'].createElement(_libComponentsApp2['default'], null)
+	  _react2['default'].createElement(
+	    'div',
+	    null,
+	    _react2['default'].createElement(_libComponentsApp2['default'], null),
+	    extras
+	  )
 	), document.getElementById('app'));
 
 /***/ },
@@ -21849,9 +21861,18 @@
 	  'm6': [3, 7, 9],
 	  '7': [4, 7, 10],
 	  'M7': [4, 7, 11],
-	  'm7': [3, 7, 10]
+	  'm7': [3, 7, 10],
+	  '9': [4, 7, 10, 14],
+	  '9b5': [4, 6, 10, 14],
+	  'm9': [3, 7, 10, 14]
 	};
+	
 	exports.CHORD_MAP = CHORD_MAP;
+	// FIXME: combine this with CHORD_MAP and refactor everything that uses it.
+	var CHORD_MAP_NAMES = [{ key: '', name: 'None', map: [] }, { key: 'M', name: 'Major', map: [4, 7] }, { key: 'm', name: 'Minor', map: [3, 7] }, { key: 'aug', name: 'Augmented', map: [4, 8] }, { key: 'dim', name: 'Diminished', map: [3, 6] }, { key: 'sus4', name: 'Sustained 4th', map: [5, 7] }, { key: 'sus2', name: 'Sustained 2nd', map: [2, 7] }, { key: '5', name: 'Fifth', map: [7] }, { key: '6', name: 'Sixth', map: [4, 7, 9] }, { key: 'm6', name: 'Minor 6th', map: [3, 7, 9] }, { key: '7', name: 'Seventh', map: [4, 7, 10] }, { key: 'M7', name: 'Major 7th', map: [4, 7, 11] }, { key: 'm7', name: 'Minor 7th', map: [3, 7, 10] }, { key: '9', name: 'Ninth', map: [4, 7, 10, 14] },
+	// This is a 7 Flat 5 with a ninth added
+	{ key: '9b5', name: 'Nine Flat 5', map: [4, 6, 10, 14] }, { key: 'm9', name: 'Minor 9th', map: [3, 7, 10, 14] }];
+	exports.CHORD_MAP_NAMES = CHORD_MAP_NAMES;
 
 /***/ },
 /* 184 */
@@ -22063,6 +22084,7 @@
 	  value: true
 	});
 	exports.noteName = noteName;
+	exports.invertChord = invertChord;
 	
 	var _libConstantsPiano = __webpack_require__(183);
 	
@@ -22088,6 +22110,39 @@
 	    }
 	    noteNum = shift(noteNum);
 	  }
+	}
+	
+	function invertChord(inversion, notes) {
+	  var modifiedNotes = notes.slice();
+	  if (inversion !== 0) {
+	    for (var inv = 1; inv <= Math.abs(inversion); inv++) {
+	      modifiedNotes = applyChordInversion(inversion, modifiedNotes);
+	    }
+	  }
+	  return modifiedNotes;
+	}
+	
+	function applyChordInversion(inversion, notes) {
+	  var changedNote;
+	  var modifiedNotes = notes.slice();
+	  if (inversion > 0) {
+	    var first = modifiedNotes.shift();
+	    changedNote = first + 12;
+	    if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
+	      console.log('inversion out of bounds');
+	      return notes;
+	    }
+	    modifiedNotes.push(changedNote);
+	  } else {
+	    var last = modifiedNotes.pop();
+	    changedNote = last - 12;
+	    if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
+	      console.log('inversion out of bounds');
+	      return notes;
+	    }
+	    modifiedNotes.splice(0, 0, changedNote);
+	  }
+	  return modifiedNotes;
 	}
 
 /***/ },
@@ -22131,6 +22186,8 @@
 	var _libActionsArrangement = __webpack_require__(182);
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
+	
+	var _libConstantsPiano = __webpack_require__(183);
 	
 	var Controls = (function (_Component) {
 	  _inherits(Controls, _Component);
@@ -22226,6 +22283,13 @@
 	    value: function render() {
 	      var _this2 = this;
 	
+	      var chordSelectOptions = _libConstantsPiano.CHORD_MAP_NAMES.map(function (chord) {
+	        return _react2['default'].createElement(
+	          'option',
+	          { key: chord.key, value: chord.key },
+	          chord.name
+	        );
+	      });
 	      return _react2['default'].createElement(
 	        'div',
 	        { id: 'controls' },
@@ -22248,71 +22312,7 @@
 	
 	                return _this2.changeChordType.apply(_this2, args);
 	              } },
-	            _react2['default'].createElement(
-	              'option',
-	              { value: '' },
-	              'None'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'M' },
-	              'Major'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'm' },
-	              'Minor'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'aug' },
-	              'Augmented'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'dim' },
-	              'Diminished'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'sus4' },
-	              'Sustained 4th'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'sus2' },
-	              'Sustained 2nd'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: '5' },
-	              'Fifth'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: '6' },
-	              'Sixth'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'm6' },
-	              'Minor 6th'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: '7' },
-	              'Seventh'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'M7' },
-	              'Major 7th'
-	            ),
-	            _react2['default'].createElement(
-	              'option',
-	              { value: 'm7' },
-	              'Minor 7th'
-	            )
+	            chordSelectOptions
 	          )
 	        ),
 	        _react2['default'].createElement(
@@ -22549,7 +22549,7 @@
 	
 	var pianoActions = _interopRequireWildcard(_libActionsPiano);
 	
-	var _libConstantsPiano = __webpack_require__(183);
+	var _libUtilNotes = __webpack_require__(186);
 	
 	var blackKeys = {
 	  1: 1,
@@ -22594,37 +22594,8 @@
 	    key: 'isSelected',
 	    value: function isSelected(note) {
 	      var chordNotes = this.props.pianoView.chordNotes;
-	      var chordInversion = this.props.controls.chordInversion;
-	      if (chordInversion !== 0) {
-	        for (var inv = 1; inv <= Math.abs(chordInversion); inv++) {
-	          chordNotes = this.invertChord(this.props.controls.chordInversion, chordNotes);
-	        }
-	      }
+	      chordNotes = (0, _libUtilNotes.invertChord)(this.props.controls.chordInversion, chordNotes);
 	      return chordNotes.indexOf(note) !== -1;
-	    }
-	  }, {
-	    key: 'invertChord',
-	    value: function invertChord(inversion, notes) {
-	      var changedNote;
-	      var modifiedNotes = notes.slice();
-	      if (inversion > 0) {
-	        var first = modifiedNotes.shift();
-	        changedNote = first + 12;
-	        if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
-	          console.log('inversion out of bounds');
-	          return notes;
-	        }
-	        modifiedNotes.push(changedNote);
-	      } else {
-	        var last = modifiedNotes.pop();
-	        changedNote = last - 12;
-	        if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
-	          console.log('inversion out of bounds');
-	          return notes;
-	        }
-	        modifiedNotes.splice(0, 0, changedNote);
-	      }
-	      return modifiedNotes;
 	    }
 	  }, {
 	    key: 'render',
@@ -22899,7 +22870,8 @@
 	            }
 	            return name;
 	          }
-	          return data.chordNotes.map(getName).join(' ');
+	          var partNotes = (0, _libUtilNotes.invertChord)(data.chordInversion, data.chordNotes);
+	          return partNotes.map(getName).join(' ');
 	        }));
 	      });
 	
@@ -22994,10 +22966,21 @@
 	  };
 	}
 	
-	var createStoreWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2['default'], logger)(_redux.createStore);
+	var storeParts = [(0, _redux.applyMiddleware)(_reduxThunk2['default'], logger)];
+	
+	if (false) {
+	  console.log('Adding redux dev-tools to data store');
+	  var persistState = require('redux-devtools').persistState;
+	  var DevTools = require('lib/components/dev-tools');
+	
+	  storeParts.push(DevTools.instrument());
+	  storeParts.push(persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/)));
+	}
+	
+	var finalCreateStore = _redux.compose.apply(undefined, storeParts)(_redux.createStore);
 	
 	function createReduxStore() {
-	  var store = createStoreWithMiddleware(_reducers2['default'], _libUtilStateStorage2['default'].restoreState());
+	  var store = finalCreateStore(_reducers2['default'], _libUtilStateStorage2['default'].restoreState());
 	
 	  if (false) {
 	    // Enable Webpack hot module replacement for reducers
