@@ -17,27 +17,6 @@ export const NOTE_NAMES = {
   12: 'C',
 };
 
-// These are the steps you'd add to a root note to form each chord.
-export const CHORD_MAP = {
-  '': [],  // no chord
-  'M': [4, 7],
-  'm': [3, 7],
-  'aug': [4, 8],
-  'dim': [3, 6],
-  'sus4': [5, 7],
-  'sus2': [2, 7],
-  '5': [7],
-  '6': [4, 7, 9],
-  'm6': [3, 7, 9],
-  '7': [4, 7, 10],
-  'M7': [4, 7, 11],
-  'm7': [3, 7, 10],
-  '9': [4, 7, 10, 14],
-  '9b5': [4, 6, 10, 14],
-  'm9': [3, 7, 10, 14],
-};
-
-// FIXME: combine this with CHORD_MAP and refactor everything that uses it.
 export const CHORD_MAP_NAMES = [
   {key: '', name: 'None', map: []},
   {key: 'M', name: 'Major', map: [4, 7]},
@@ -57,3 +36,10 @@ export const CHORD_MAP_NAMES = [
   {key: '9b5', name: 'Nine Flat 5', map: [4, 6, 10, 14]},
   {key: 'm9', name: 'Minor 9th', map: [3, 7, 10, 14]},
 ];
+
+// Map of chord key to root offsets to make note calculations easier.
+export var CHORD_MAP = {};
+
+CHORD_MAP_NAMES.forEach((chord) => {
+  CHORD_MAP[chord.key] = chord.map;
+});
