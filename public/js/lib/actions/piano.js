@@ -13,11 +13,11 @@ export function touchNote(note) {
     });
     dispatch(setChordNotes({
       root: note,
-      chordType: state.pianoView.chordType,
+      chordType: state.controls.chordType,
     }));
     dispatch({
       type: actionTypes.SET_CHORD_TYPE,
-      chordType: state.pianoView.chordType,
+      chordType: state.controls.chordType,
     });
     stateStorage.saveState({
       dispatch: dispatch,
