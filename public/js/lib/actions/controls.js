@@ -1,7 +1,7 @@
 import * as actionTypes from 'lib/constants/action-types';
 
 import stateStorage from 'lib/util/state-storage';
-import { setChordNotes } from './arrangement';
+import { getCurrentChordPart, setChordNotes } from './arrangement';
 
 
 export function setChordType(chordType) {
@@ -12,7 +12,7 @@ export function setChordType(chordType) {
       chordType: chordType,
     });
     dispatch(setChordNotes({
-      root: state.pianoView.chordRoot,
+      root: getCurrentChordPart(state.arrangement).chordRoot,
       chordType: chordType,
     }));
     stateStorage.saveState({

@@ -19,6 +19,12 @@ export function setCurrentPart(partNum) {
 }
 
 
+export function getCurrentChordPart({currentPart, currentPosition, parts}) {
+  let arrPart = (parts.length) ? parts[currentPart]: [];
+  return (arrPart.length) ? arrPart[currentPosition] : {};
+}
+
+
 export function setPosition(partNum, position) {
   return (dispatch, getState) => {
     dispatch({
@@ -61,7 +67,7 @@ function dispatchCurrentChords(dispatch, state) {
     chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
     let chordNotesAction = setChordNotes({
       root: chordRoot,
-      chordType: state.pianoView.chordType,
+      chordType: state.controls.chordType,
     });
     chordNotes = chordNotesAction.chordNotes;
   }
