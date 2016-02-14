@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import { noteName } from 'lib/util/notes';
+import { chordName } from 'lib/util/notes';
 
 
 export default class ArrangementPart extends Component {
@@ -29,7 +29,7 @@ export default class ArrangementPart extends Component {
         <a  onClick={(e) => this.setPosition(e, position)}
             href="#" key={position} className={cls} >
           {typeof chordData.chordRoot !== 'undefined' ?
-              noteName(chordData.chordRoot) : empty}
+              chordName(chordData) : empty}
         </a>
       );
     }
