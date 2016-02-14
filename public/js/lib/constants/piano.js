@@ -17,6 +17,9 @@ export const NOTE_NAMES = {
   12: 'C',
 };
 
+// TODO: build chords out of scales instead so we can
+// define the notes as first, third, fifth, ...
+
 // Each number in `map` are the steps you add to a root to form the chord.
 export const CHORD_MAP_NAMES = [
   {key: '', name: 'None', map: []},
