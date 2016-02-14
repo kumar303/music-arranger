@@ -28,6 +28,13 @@ export function noteName(noteNum) {
 }
 
 
+export function chordName(chordData) {
+  // Get the short name of a chord, like Cm7 for C minor 7.
+  let note = noteName(chordData.chordRoot);
+  return `${note}${chordData.chordType}`;
+}
+
+
 export function invertChord(inversion, notes) {
   let modifiedNotes = notes.slice();
   if (inversion !== 0) {

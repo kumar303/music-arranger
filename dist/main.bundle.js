@@ -20743,7 +20743,11 @@
 	    var keys = Object.getOwnPropertyNames(sourceComponent);
 	    for (var i=0; i<keys.length; ++i) {
 	        if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]]) {
-	            targetComponent[keys[i]] = sourceComponent[keys[i]];
+	            try {
+	                targetComponent[keys[i]] = sourceComponent[keys[i]];
+	            } catch (error) {
+	
+	            }
 	        }
 	    }
 	
@@ -20762,8 +20766,6 @@
 	 * This source code is licensed under the BSD-style license found in the
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule invariant
 	 */
 	
 	'use strict';
@@ -20797,9 +20799,9 @@
 	      var args = [a, b, c, d, e, f];
 	      var argIndex = 0;
 	      error = new Error(
-	        'Invariant Violation: ' +
 	        format.replace(/%s/g, function() { return args[argIndex++]; })
 	      );
+	      error.name = 'Invariant Violation';
 	    }
 	
 	    error.framesToPop = 1; // we don't care about invariant's own frame
@@ -21827,8 +21829,8 @@
 	});
 	var PIANO_KEY_START = -12;exports.PIANO_KEY_START = PIANO_KEY_START;
 	// low C
-	var PIANO_KEY_END = 13;exports.PIANO_KEY_END = PIANO_KEY_END;
-	// high C#
+	var PIANO_KEY_END = 23;exports.PIANO_KEY_END = PIANO_KEY_END;
+	// high B
 	
 	var NOTE_NAMES = {
 	  0: 'C',
@@ -21847,32 +21849,22 @@
 	};
 	
 	exports.NOTE_NAMES = NOTE_NAMES;
-	// These are the steps you'd add to a root note to form each chord.
-	var CHORD_MAP = {
-	  '': [], // no chord
-	  'M': [4, 7],
-	  'm': [3, 7],
-	  'aug': [4, 8],
-	  'dim': [3, 6],
-	  'sus4': [5, 7],
-	  'sus2': [2, 7],
-	  '5': [7],
-	  '6': [4, 7, 9],
-	  'm6': [3, 7, 9],
-	  '7': [4, 7, 10],
-	  'M7': [4, 7, 11],
-	  'm7': [3, 7, 10],
-	  '9': [4, 7, 10, 14],
-	  '9b5': [4, 6, 10, 14],
-	  'm9': [3, 7, 10, 14]
-	};
+	// TODO: build chords out of scales instead so we can
+	// define the notes as first, third, fifth, ...
 	
-	exports.CHORD_MAP = CHORD_MAP;
-	// FIXME: combine this with CHORD_MAP and refactor everything that uses it.
+	// Each number in `map` are the steps you add to a root to form the chord.
 	var CHORD_MAP_NAMES = [{ key: '', name: 'None', map: [] }, { key: 'M', name: 'Major', map: [4, 7] }, { key: 'm', name: 'Minor', map: [3, 7] }, { key: 'aug', name: 'Augmented', map: [4, 8] }, { key: 'dim', name: 'Diminished', map: [3, 6] }, { key: 'sus4', name: 'Sustained 4th', map: [5, 7] }, { key: 'sus2', name: 'Sustained 2nd', map: [2, 7] }, { key: '5', name: 'Fifth', map: [7] }, { key: '6', name: 'Sixth', map: [4, 7, 9] }, { key: 'm6', name: 'Minor 6th', map: [3, 7, 9] }, { key: '7', name: 'Seventh', map: [4, 7, 10] }, { key: 'M7', name: 'Major 7th', map: [4, 7, 11] }, { key: 'm7', name: 'Minor 7th', map: [3, 7, 10] }, { key: '9', name: 'Ninth', map: [4, 7, 10, 14] },
 	// This is a 7 Flat 5 with a ninth added
 	{ key: '9b5', name: 'Nine Flat 5', map: [4, 6, 10, 14] }, { key: 'm9', name: 'Minor 9th', map: [3, 7, 10, 14] }];
+	
 	exports.CHORD_MAP_NAMES = CHORD_MAP_NAMES;
+	// Map of chord key to root offsets to make note calculations easier.
+	var CHORD_MAP = {};
+	
+	exports.CHORD_MAP = CHORD_MAP;
+	CHORD_MAP_NAMES.forEach(function (chord) {
+	  CHORD_MAP[chord.key] = chord.map;
+	});
 
 /***/ },
 /* 184 */
@@ -22033,11 +22025,11 @@
 	              return _this.setPosition(e, position);
 	            },
 	            href: '#', key: position, className: cls },
-	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.noteName)(chordData.chordRoot) : empty
+	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.chordName)(chordData) : empty
 	        ));
 	      };
 	
-	      for (var position = 0; position < 8; position++) {
+	      for (var position = 0; position < 9; position++) {
 	        _loop(position);
 	      }
 	      return chords;
@@ -22084,6 +22076,7 @@
 	  value: true
 	});
 	exports.noteName = noteName;
+	exports.chordName = chordName;
 	exports.invertChord = invertChord;
 	
 	var _libConstantsPiano = __webpack_require__(183);
@@ -22110,6 +22103,12 @@
 	    }
 	    noteNum = shift(noteNum);
 	  }
+	}
+	
+	function chordName(chordData) {
+	  // Get the short name of a chord, like Cm7 for C minor 7.
+	  var note = noteName(chordData.chordRoot);
+	  return '' + note + chordData.chordType;
 	}
 	
 	function invertChord(inversion, notes) {
@@ -22666,6 +22665,10 @@
 	      root: note,
 	      chordType: state.pianoView.chordType
 	    }));
+	    dispatch({
+	      type: actionTypes.SET_CHORD_TYPE,
+	      chordType: state.pianoView.chordType
+	    });
 	    _libUtilStateStorage2['default'].saveState({
 	      dispatch: dispatch,
 	      state: getState()

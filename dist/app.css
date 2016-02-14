@@ -426,7 +426,7 @@ a {
 
 #content {
   min-height: 100%;
-  width: 782px;
+  width: 884px;
   margin: auto;
   margin-top: 2px;
   text-align: left;
@@ -689,7 +689,7 @@ button.spinner:after {
 .key {
   float: left;
   position: relative;
-  width: 50px;
+  width: 40px;
   height: 140px;
   margin: 0 2px 2px 0;
   background: #fff;
