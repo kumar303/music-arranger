@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { getCurrentChordPart } from 'lib/actions/arrangement';
 import * as pianoActions from 'lib/actions/piano';
 import { invertChord } from 'lib/util/notes';
 
@@ -18,10 +19,10 @@ export class PianoKey extends Component {
   // TODO: should probably move a lot of this logic to <Piano> for speed.
 
   static propTypes = {
+    arrangement: PropTypes.object.isRequired,
     controls: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
     note: PropTypes.number.isRequired,
-    pianoView: PropTypes.object.isRequired,
   }
 
   constructor(props) {
@@ -37,9 +38,12 @@ export class PianoKey extends Component {
   }
 
   isSelected(note) {
-    let chordNotes = this.props.pianoView.chordNotes;
-    chordNotes = invertChord(this.props.controls.chordInversion,
-                             chordNotes);
+    let chord = getCurrentChordPart(this.props.arrangement);
+    let chordNotes = [];
+    if (chord.chordNotes) {
+      chordNotes = invertChord(this.props.controls.chordInversion,
+                               chord.chordNotes);
+    }
     return chordNotes.indexOf(note) !== -1;
   }
 
@@ -59,7 +63,7 @@ export class PianoKey extends Component {
 function select(state) {
   return {
     controls: state.controls,
-    pianoView: state.pianoView,
+    arrangement: state.arrangement,
   };
 }
 

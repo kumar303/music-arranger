@@ -21677,6 +21677,7 @@
 	  value: true
 	});
 	exports.setCurrentPart = setCurrentPart;
+	exports.getCurrentChordPart = getCurrentChordPart;
 	exports.setPosition = setPosition;
 	exports.clearExportedData = clearExportedData;
 	exports.setExportedData = setExportedData;
@@ -21704,6 +21705,15 @@
 	    });
 	    dispatchCurrentChords(dispatch, getState());
 	  };
+	}
+	
+	function getCurrentChordPart(_ref) {
+	  var currentPart = _ref.currentPart;
+	  var currentPosition = _ref.currentPosition;
+	  var parts = _ref.parts;
+	
+	  var arrPart = parts.length ? parts[currentPart] : [];
+	  return arrPart.length ? arrPart[currentPosition] : {};
 	}
 	
 	function setPosition(partNum, position) {
@@ -21747,7 +21757,7 @@
 	    chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
 	    var chordNotesAction = setChordNotes({
 	      root: chordRoot,
-	      chordType: state.pianoView.chordType
+	      chordType: state.controls.chordType
 	    });
 	    chordNotes = chordNotesAction.chordNotes;
 	  }
@@ -21791,10 +21801,10 @@
 	  };
 	}
 	
-	function setChordNotes(_ref) {
-	  var root = _ref.root;
-	  var _ref$chordType = _ref.chordType;
-	  var chordType = _ref$chordType === undefined ? 'M' : _ref$chordType;
+	function setChordNotes(_ref2) {
+	  var root = _ref2.root;
+	  var _ref2$chordType = _ref2.chordType;
+	  var chordType = _ref2$chordType === undefined ? 'M' : _ref2$chordType;
 	
 	  var chordNotes = [];
 	  chordNotes.push(root);
@@ -22412,7 +22422,7 @@
 	      chordType: chordType
 	    });
 	    dispatch((0, _arrangement.setChordNotes)({
-	      root: state.pianoView.chordRoot,
+	      root: (0, _arrangement.getCurrentChordPart)(state.arrangement).chordRoot,
 	      chordType: chordType
 	    }));
 	    _libUtilStateStorage2['default'].saveState({
@@ -22544,6 +22554,8 @@
 	
 	var _redux = __webpack_require__(166);
 	
+	var _libActionsArrangement = __webpack_require__(182);
+	
 	var _libActionsPiano = __webpack_require__(191);
 	
 	var pianoActions = _interopRequireWildcard(_libActionsPiano);
@@ -22567,10 +22579,10 @@
 	    // TODO: should probably move a lot of this logic to <Piano> for speed.
 	
 	    value: {
+	      arrangement: _react.PropTypes.object.isRequired,
 	      controls: _react.PropTypes.object.isRequired,
 	      dispatch: _react.PropTypes.func.isRequired,
-	      note: _react.PropTypes.number.isRequired,
-	      pianoView: _react.PropTypes.object.isRequired
+	      note: _react.PropTypes.number.isRequired
 	    },
 	    enumerable: true
 	  }]);
@@ -22592,8 +22604,11 @@
 	  }, {
 	    key: 'isSelected',
 	    value: function isSelected(note) {
-	      var chordNotes = this.props.pianoView.chordNotes;
-	      chordNotes = (0, _libUtilNotes.invertChord)(this.props.controls.chordInversion, chordNotes);
+	      var chord = (0, _libActionsArrangement.getCurrentChordPart)(this.props.arrangement);
+	      var chordNotes = [];
+	      if (chord.chordNotes) {
+	        chordNotes = (0, _libUtilNotes.invertChord)(this.props.controls.chordInversion, chord.chordNotes);
+	      }
 	      return chordNotes.indexOf(note) !== -1;
 	    }
 	  }, {
@@ -22623,7 +22638,7 @@
 	function select(state) {
 	  return {
 	    controls: state.controls,
-	    pianoView: state.pianoView
+	    arrangement: state.arrangement
 	  };
 	}
 	
@@ -22663,11 +22678,11 @@
 	    });
 	    dispatch((0, _arrangement.setChordNotes)({
 	      root: note,
-	      chordType: state.pianoView.chordType
+	      chordType: state.controls.chordType
 	    }));
 	    dispatch({
 	      type: actionTypes.SET_CHORD_TYPE,
-	      chordType: state.pianoView.chordType
+	      chordType: state.controls.chordType
 	    });
 	    _libUtilStateStorage2['default'].saveState({
 	      dispatch: dispatch,
@@ -23047,15 +23062,10 @@
 	
 	var _arrangement2 = _interopRequireDefault(_arrangement);
 	
-	var _pianoView = __webpack_require__(201);
-	
-	var _pianoView2 = _interopRequireDefault(_pianoView);
-	
 	var rootReducer = (0, _redux.combineReducers)({
 	  app: _app2['default'],
 	  controls: _controls2['default'],
-	  arrangement: _arrangement2['default'],
-	  pianoView: _pianoView2['default']
+	  arrangement: _arrangement2['default']
 	});
 	
 	exports['default'] = rootReducer;
@@ -23155,17 +23165,30 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
+	var _libActionsArrangement = __webpack_require__(182);
+	
 	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
+	
+	var _controls = __webpack_require__(199);
+	
+	var defaultChordRoot = -12; // C
 	
 	var initialArrangementState = {
 	  exportedData: null,
 	  currentPart: 0,
 	  currentPosition: 0,
-	  // Example:
-	  // [[{"chordRoot":-8}, ...], [...]]
-	  parts: []
+	  // This is the arrangement list. It is separated by parts (1, 2, ...).
+	  // Each part contains one or more chords.
+	  parts: [[{
+	    chordRoot: defaultChordRoot,
+	    chordType: _controls.initialControlsState.chordType,
+	    chordNotes: (0, _libActionsArrangement.setChordNotes)({
+	      root: defaultChordRoot,
+	      chordType: _controls.initialControlsState.chordType
+	    }).chordNotes
+	  }]]
 	};
 	
 	exports.initialArrangementState = initialArrangementState;
@@ -23234,54 +23257,6 @@
 	  var allParts = state.parts.slice();
 	  allParts[state.currentPart] = part;
 	  return allParts;
-	}
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = pianoView;
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	var _libConstantsActionTypes = __webpack_require__(179);
-	
-	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
-	
-	var initialPianoViewState = {
-	  chordRoot: -12,
-	  chordType: 'M',
-	  chordNotes: []
-	};
-	
-	exports.initialPianoViewState = initialPianoViewState;
-	
-	function pianoView(state, action) {
-	  switch (action.type) {
-	    case actionTypes.RESET_STATE:
-	      return initialPianoViewState;
-	    case actionTypes.RESTORE_STATE:
-	      return action.state.pianoView;
-	    case actionTypes.SET_CHORD_TYPE:
-	      return Object.assign({}, state, {
-	        chordType: action.chordType
-	      });
-	    case actionTypes.TOUCH_NOTE:
-	      return Object.assign({}, state, {
-	        chordRoot: action.note
-	      });
-	    case actionTypes.SET_CHORD_NOTES:
-	      return Object.assign({}, state, {
-	        chordNotes: action.chordNotes
-	      });
-	    default:
-	      return state || initialPianoViewState;
-	  }
 	}
 
 /***/ }

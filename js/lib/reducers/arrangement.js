@@ -1,13 +1,23 @@
+import { setChordNotes } from 'lib/actions/arrangement';
 import * as actionTypes from 'lib/constants/action-types';
+import { initialControlsState } from './controls';
 
+const defaultChordRoot = -12;  // C
 
 export const initialArrangementState = {
   exportedData: null,
   currentPart: 0,
   currentPosition: 0,
-  // Example:
-  // [[{"chordRoot":-8}, ...], [...]]
-  parts: [],
+  // This is the arrangement list. It is separated by parts (1, 2, ...).
+  // Each part contains one or more chords.
+  parts: [[{
+    chordRoot: defaultChordRoot,
+    chordType: initialControlsState.chordType,
+    chordNotes: setChordNotes({
+      root: defaultChordRoot,
+      chordType: initialControlsState.chordType,
+    }).chordNotes,
+  }]],
 };
 
 
