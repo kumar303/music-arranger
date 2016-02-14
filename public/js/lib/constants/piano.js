@@ -1,5 +1,5 @@
 export const PIANO_KEY_START = -12;  // low C
-export const PIANO_KEY_END = 13;  // high C#
+export const PIANO_KEY_END = 23;  // high B
 
 export const NOTE_NAMES = {
   0: 'C',

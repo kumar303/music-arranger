@@ -21,7 +21,7 @@ export default class ArrangementPart extends Component {
   renderChords() {
     const empty = <span>&nbsp;</span>;
     let chords = [];
-    for (let position=0; position < 8; position++) {
+    for (let position=0; position < 9; position++) {
       let chordData = this.props.part[position] || {};
       let cls = (this.props.currentPart === this.props.partNum &&
                  this.props.currentPosition === position) ? 'active' : '';
