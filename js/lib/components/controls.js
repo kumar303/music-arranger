@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as appActions from 'lib/actions/app';
 import * as controlActions from 'lib/actions/controls';
 import * as arrangementActions from 'lib/actions/arrangement';
-import { CHORD_MAP_NAMES } from 'lib/constants/piano';
+import { CHORD_MAP_NAMES } from 'lib/constants/chords';
 
 
 export class Controls extends Component {

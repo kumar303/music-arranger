@@ -60,7 +60,7 @@
 	
 	var _libComponentsApp2 = _interopRequireDefault(_libComponentsApp);
 	
-	var _libDataStore = __webpack_require__(195);
+	var _libDataStore = __webpack_require__(197);
 	
 	var _libDataStore2 = _interopRequireDefault(_libDataStore);
 	
@@ -20851,23 +20851,23 @@
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
 	
-	var _libComponentsArrangement = __webpack_require__(184);
+	var _libComponentsArrangement = __webpack_require__(187);
 	
 	var _libComponentsArrangement2 = _interopRequireDefault(_libComponentsArrangement);
 	
-	var _libComponentsControls = __webpack_require__(187);
+	var _libComponentsControls = __webpack_require__(189);
 	
 	var _libComponentsControls2 = _interopRequireDefault(_libComponentsControls);
 	
-	var _libComponentsPiano = __webpack_require__(189);
+	var _libComponentsPiano = __webpack_require__(191);
 	
 	var _libComponentsPiano2 = _interopRequireDefault(_libComponentsPiano);
 	
-	var _libComponentsError = __webpack_require__(192);
+	var _libComponentsError = __webpack_require__(194);
 	
 	var _libComponentsError2 = _interopRequireDefault(_libComponentsError);
 	
-	var _libComponentsExportedData = __webpack_require__(194);
+	var _libComponentsExportedData = __webpack_require__(196);
 	
 	var _libComponentsExportedData2 = _interopRequireDefault(_libComponentsExportedData);
 	
@@ -21693,9 +21693,15 @@
 	
 	var _libConstantsPiano = __webpack_require__(183);
 	
+	var _libConstantsChords = __webpack_require__(184);
+	
+	var _libConstantsScales = __webpack_require__(185);
+	
 	var _libUtilStateStorage = __webpack_require__(180);
 	
 	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
+	
+	var _libUtilNotes = __webpack_require__(186);
 	
 	function setCurrentPart(partNum) {
 	  return function (dispatch, getState) {
@@ -21801,16 +21807,48 @@
 	  };
 	}
 	
+	function applyChordFormula(root, chordType) {
+	  // Given a root (anywhere on the keyboard), apply a chord formula
+	  // to return a list of all chord notes.
+	  var formula = _libConstantsChords.CHORD_FORMULAS[chordType];
+	  if (formula === undefined) {
+	    throw new Error('unknown chordType: ' + chordType + ' (or undefined formula)');
+	  }
+	
+	  var rootName = (0, _libUtilNotes.noteName)(root);
+	  var rootOffset = _libConstantsScales.MASTER_SCALE_MAP[rootName];
+	  // Get all the notes in this root's scale.
+	  var scaleNotes = _libConstantsScales.SCALES[rootName].notes;
+	
+	  return formula.map(function (pos) {
+	    var modifier = undefined;
+	    if (pos.modifier) {
+	      // Prepare to apply a modifier, such as flat() or sharp()
+	      // which would adjust the note number.
+	      modifier = pos.modifier;
+	      pos = pos.position;
+	    }
+	    var noteInPosition = scaleNotes[pos - 1];
+	    if (noteInPosition === undefined) {
+	      throw new Error('Position ' + pos + ' missing from scale ' + rootName + ', ' + chordType);
+	    }
+	    // Apply the scale position for this part of the chord.
+	    // Also adjust the positions based on where the tonic of the scale
+	    // starts. For example, D needs to move back -1 numbers.
+	    var note = root + noteInPosition - rootOffset;
+	    if (modifier) {
+	      note = modifier(note);
+	    }
+	    return note;
+	  });
+	}
+	
 	function setChordNotes(_ref2) {
 	  var root = _ref2.root;
 	  var _ref2$chordType = _ref2.chordType;
 	  var chordType = _ref2$chordType === undefined ? 'M' : _ref2$chordType;
 	
-	  var chordNotes = [];
-	  chordNotes.push(root);
-	  _libConstantsPiano.CHORD_MAP[chordType].forEach(function (sumBy) {
-	    chordNotes.push(root + sumBy);
-	  });
+	  var chordNotes = applyChordFormula(root, chordType);
 	  return {
 	    type: actionTypes.SET_CHORD_NOTES,
 	    chordNotes: chordNotes
@@ -21832,52 +21870,295 @@
 /* 183 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	var PIANO_KEY_START = -12;exports.PIANO_KEY_START = PIANO_KEY_START;
 	// low C
 	var PIANO_KEY_END = 23;exports.PIANO_KEY_END = PIANO_KEY_END;
 	// high B
-	
-	var NOTE_NAMES = {
-	  0: 'C',
-	  1: 'C#',
-	  2: 'D',
-	  3: 'Eb',
-	  4: 'E',
-	  5: 'F',
-	  6: 'F#',
-	  7: 'G',
-	  8: 'Ab',
-	  9: 'A',
-	  10: 'Bb',
-	  11: 'B',
-	  12: 'C'
-	};
-	
-	exports.NOTE_NAMES = NOTE_NAMES;
-	// TODO: build chords out of scales instead so we can
-	// define the notes as first, third, fifth, ...
-	
-	// Each number in `map` are the steps you add to a root to form the chord.
-	var CHORD_MAP_NAMES = [{ key: '', name: 'None', map: [] }, { key: 'M', name: 'Major', map: [4, 7] }, { key: 'm', name: 'Minor', map: [3, 7] }, { key: 'aug', name: 'Augmented', map: [4, 8] }, { key: 'dim', name: 'Diminished', map: [3, 6] }, { key: 'sus4', name: 'Sustained 4th', map: [5, 7] }, { key: 'sus2', name: 'Sustained 2nd', map: [2, 7] }, { key: '5', name: 'Fifth', map: [7] }, { key: '6', name: 'Sixth', map: [4, 7, 9] }, { key: 'm6', name: 'Minor 6th', map: [3, 7, 9] }, { key: '7', name: 'Seventh', map: [4, 7, 10] }, { key: 'M7', name: 'Major 7th', map: [4, 7, 11] }, { key: 'm7', name: 'Minor 7th', map: [3, 7, 10] }, { key: '9', name: 'Ninth', map: [4, 7, 10, 14] },
-	// This is a 7 Flat 5 with a ninth added
-	{ key: '9b5', name: 'Nine Flat 5', map: [4, 6, 10, 14] }, { key: 'm9', name: 'Minor 9th', map: [3, 7, 10, 14] }];
-	
-	exports.CHORD_MAP_NAMES = CHORD_MAP_NAMES;
-	// Map of chord key to root offsets to make note calculations easier.
-	var CHORD_MAP = {};
-	
-	exports.CHORD_MAP = CHORD_MAP;
-	CHORD_MAP_NAMES.forEach(function (chord) {
-	  CHORD_MAP[chord.key] = chord.map;
-	});
 
 /***/ },
 /* 184 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	function buildChordMap() {
+	
+	  function flat(position) {
+	    return { position: position, modifier: function modifier(note) {
+	        return note - 1;
+	      } };
+	  }
+	
+	  function sharp(position) {
+	    return { position: position, modifier: function modifier(note) {
+	        return note + 1;
+	      } };
+	  }
+	
+	  return [
+	  // Major:
+	  { key: 'M', name: 'Major triad', formula: [1, 3, 5] }, { key: 'add4', name: 'Added 4th', formula: [1, 3, 4, 5] }, { key: '6', name: 'Sixth', formula: [1, 3, 5, 6] }, { key: 'M7', name: 'Major 7th', formula: [1, 3, 5, 7] }, { key: 'M9', name: 'Major 9th', formula: [1, 3, 5, 7, 9] }, { key: 'M11', name: 'Major 11th', formula: [1, 3, 5, 7, 9, 11] }, { key: 'M13', name: 'Major 13th', formula: [1, 3, 5, 7, 9, 11, 13] },
+	
+	  // Minor:
+	  { key: 'm', name: 'Minor triad', formula: [1, flat(3), 5] }, { key: 'm6', name: 'Minor 6th', formula: [1, flat(3), 5, 6] }, { key: 'm7', name: 'Minor 7th', formula: [1, flat(3), 5, flat(7)] }, { key: 'm7b5', name: 'Minor 7th Flat 5',
+	    formula: [1, flat(3), flat(5), flat(7)] }, { key: 'm9', name: 'Minor 9th',
+	    formula: [1, flat(3), 5, flat(7), 9] }, { key: 'm11', name: 'Minor 11th',
+	    formula: [1, flat(3), 5, flat(7), 9, 11] }, { key: 'm13', name: 'Minor 13th',
+	    formula: [1, flat(3), 5, flat(7), 9, 11, 13] },
+	
+	  // Dominant
+	  { key: '7', name: 'Seventh', formula: [1, 3, 5, flat(7)] }, { key: '9', name: 'Ninth', formula: [1, 3, 5, flat(7), 9] }, { key: '7b5', name: 'Seven Flat 5',
+	    formula: [1, 3, flat(5), flat(7)] }, { key: '9b5', name: 'Nine Flat 5',
+	    formula: [1, 3, flat(5), flat(7), 9] },
+	
+	  // Symmetrical
+	  { key: 'dim', name: 'Diminished', formula: [1, flat(3), flat(5)] }, { key: 'aug', name: 'Augmented', formula: [1, 3, sharp(5)] },
+	
+	  // Miscellaneous
+	  { key: 'sus4', name: 'Suspended 4th', formula: [1, 4, 5] }, { key: 'sus2', name: 'Suspended 2nd', formula: [1, 2, 5] }, { key: '5', name: 'Fifth', formula: [1, 5] }];
+	}
+	
+	var CHORD_MAP_NAMES = buildChordMap();
+	exports.CHORD_MAP_NAMES = CHORD_MAP_NAMES;
+	var CHORD_FORMULAS = {};
+	
+	exports.CHORD_FORMULAS = CHORD_FORMULAS;
+	CHORD_MAP_NAMES.forEach(function (chord) {
+	  CHORD_FORMULAS[chord.key] = chord.formula;
+	});
+
+/***/ },
+/* 185 */
+/***/ function(module, exports) {
+
+	
+	// 12-step scale of all notes.
+	// The keys (0-11) are used as offsets for chord formulas.
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.getScaleNotes = getScaleNotes;
+	var MASTER_SCALE = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+	
+	exports.MASTER_SCALE = MASTER_SCALE;
+	// Map of IDs for each note in the scale.
+	// e.g. {C: 0, C#: 1, D: 2, ...}
+	var MASTER_SCALE_MAP = {};
+	
+	exports.MASTER_SCALE_MAP = MASTER_SCALE_MAP;
+	MASTER_SCALE.forEach(function (name, key) {
+	  MASTER_SCALE_MAP[name] = key;
+	});
+	
+	// Map of notes in each scale.
+	// TODO: Each octave of notes repeat, maybe fix this. The reason it
+	// repeats is to make applying formulas for 9th, 11th, and 13th chords
+	// easier.
+	var SCALES = {
+	  'C': {
+	    scale: 'major',
+	    notes: getScaleNotes('C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B')
+	  },
+	  'C#': {
+	    scale: 'major',
+	    notes: getScaleNotes('C#', 'Eb', 'F', 'F#', 'Ab', 'Bb', 'C', 'C#', 'Eb', 'F', 'F#', 'Ab', 'Bb', 'C')
+	  },
+	  'D': {
+	    scale: 'major',
+	    notes: getScaleNotes('D', 'E', 'F#', 'G', 'A', 'B', 'C#', 'D', 'E', 'F#', 'G', 'A', 'B', 'C#')
+	  },
+	  'Eb': {
+	    scale: 'major',
+	    notes: getScaleNotes('Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D')
+	  },
+	  'E': {
+	    scale: 'major',
+	    notes: getScaleNotes('E', 'F#', 'Ab', 'A', 'B', 'C#', 'Eb', 'E', 'F#', 'Ab', 'A', 'B', 'C#', 'Eb')
+	  },
+	  'F': {
+	    scale: 'major',
+	    notes: getScaleNotes('F', 'G', 'A', 'Bb', 'C', 'D', 'E', 'F', 'G', 'A', 'Bb', 'C', 'D', 'E')
+	  },
+	  'F#': {
+	    scale: 'major',
+	    notes: getScaleNotes('F#', 'Ab', 'Bb', 'B', 'C#', 'Eb', 'F', 'F#', 'Ab', 'Bb', 'B', 'C#', 'Eb', 'F')
+	  },
+	  'G': {
+	    scale: 'major',
+	    notes: getScaleNotes('G', 'A', 'B', 'C', 'D', 'E', 'F#', 'G', 'A', 'B', 'C', 'D', 'E', 'F#')
+	  },
+	  'Ab': {
+	    scale: 'major',
+	    notes: getScaleNotes('Ab', 'Bb', 'C', 'C#', 'Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'C#', 'Eb', 'F', 'G')
+	  },
+	  'A': {
+	    scale: 'major',
+	    notes: getScaleNotes('A', 'B', 'C#', 'D', 'E', 'F#', 'Ab', 'A', 'B', 'C#', 'D', 'E', 'F#', 'Ab')
+	  },
+	  'Bb': {
+	    scale: 'major',
+	    notes: getScaleNotes('Bb', 'C', 'D', 'Eb', 'F', 'G', 'A', 'Bb', 'C', 'D', 'Eb', 'F', 'G', 'A')
+	  },
+	  'B': {
+	    scale: 'major',
+	    notes: getScaleNotes('B', 'C#', 'Eb', 'E', 'F#', 'Ab', 'Bb', 'B', 'C#', 'Eb', 'E', 'F#', 'Ab', 'Bb')
+	  }
+	};
+	
+	exports.SCALES = SCALES;
+	
+	function getScaleNotes() {
+	  for (var _len = arguments.length, noteNames = Array(_len), _key = 0; _key < _len; _key++) {
+	    noteNames[_key] = arguments[_key];
+	  }
+	
+	  // Return a list of note IDs for a sequence of note names.
+	  // The list is in reference to 0 (middle C) so it can be applied
+	  // as chord offsets.
+	  var allNoteIds = [];
+	
+	  function copyScaleKeys() {
+	    return MASTER_SCALE.map(function (value, key) {
+	      return key;
+	    });
+	  }
+	
+	  function nextNoteId() {
+	    return MASTER_SCALE_MAP[noteNames.shift()];
+	  }
+	
+	  var scaleKeys = copyScaleKeys();
+	  var modifier = 0;
+	  var noteId = nextNoteId();
+	
+	  // Walk the scale, matching up each note name with its key.
+	  // Each time we loop through the scale, increase the numeric
+	  // key value by 12 so that higher formulas (9th, 11th chords)
+	  // can be applied.
+	  while (true) {
+	    var scaleId = scaleKeys.shift();
+	
+	    if (scaleId === noteId) {
+	      allNoteIds.push(noteId + modifier);
+	      noteId = nextNoteId();
+	      if (noteId === undefined) {
+	        break;
+	      }
+	    }
+	    if (scaleKeys.length === 0) {
+	      scaleKeys = copyScaleKeys();
+	      modifier += MASTER_SCALE.length;
+	    }
+	  }
+	
+	  return allNoteIds;
+	}
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.noteName = noteName;
+	exports.chordName = chordName;
+	exports.invertChord = invertChord;
+	
+	var _libConstantsScales = __webpack_require__(185);
+	
+	var _libConstantsPiano = __webpack_require__(183);
+	
+	function noteName(noteNum) {
+	  // Keep shifting until the note is in the 0-11 range so we can return its
+	  // name. There is probably a way better way to do this with magic math.
+	  var scaleLength = _libConstantsScales.MASTER_SCALE.length;
+	  var shift;
+	  var counter = 0;
+	  var name;
+	
+	  if (isNaN(noteNum)) {
+	    throw new Error('noteNum must be a number; got ' + noteNum);
+	  }
+	
+	  if (noteNum < 0) {
+	    shift = function (num) {
+	      return num + scaleLength;
+	    };
+	  } else {
+	    shift = function (num) {
+	      return num - scaleLength;
+	    };
+	  }
+	
+	  while (true) {
+	    name = _libConstantsScales.MASTER_SCALE[noteNum];
+	    if (typeof name !== 'undefined') {
+	      return name;
+	    }
+	    noteNum = shift(noteNum);
+	
+	    if (counter > 30) {
+	      throw new Error('too much recursion');
+	    }
+	    counter++;
+	  }
+	}
+	
+	function chordName(chordData) {
+	  // Get the short name of a chord, like Cm7 for C minor 7.
+	  var note = noteName(chordData.chordRoot);
+	  return '' + note + chordData.chordType;
+	}
+	
+	function invertChord(inversion, notes) {
+	  var modifiedNotes = notes.slice();
+	  if (inversion !== 0) {
+	    for (var inv = 1; inv <= Math.abs(inversion); inv++) {
+	      modifiedNotes = applyChordInversion(inversion, modifiedNotes);
+	    }
+	  }
+	  return modifiedNotes;
+	}
+	
+	function applyChordInversion(inversion, notes) {
+	  var changedNote;
+	  var modifiedNotes = notes.slice();
+	  if (inversion > 0) {
+	    var first = modifiedNotes.shift();
+	    changedNote = first + 12;
+	    if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
+	      console.log('inversion out of bounds');
+	      return notes;
+	    }
+	    modifiedNotes.push(changedNote);
+	  } else {
+	    var last = modifiedNotes.pop();
+	    changedNote = last - 12;
+	    if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
+	      console.log('inversion out of bounds');
+	      return notes;
+	    }
+	    modifiedNotes.splice(0, 0, changedNote);
+	  }
+	  return modifiedNotes;
+	}
+
+/***/ },
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21910,7 +22191,7 @@
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
 	
-	var _libComponentsArrangementPart = __webpack_require__(185);
+	var _libComponentsArrangementPart = __webpack_require__(188);
 	
 	var _libComponentsArrangementPart2 = _interopRequireDefault(_libComponentsArrangementPart);
 	
@@ -21974,7 +22255,7 @@
 	exports['default'] = (0, _reactRedux.connect)(select)(Arrangement);
 
 /***/ },
-/* 185 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22077,85 +22358,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.noteName = noteName;
-	exports.chordName = chordName;
-	exports.invertChord = invertChord;
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	function noteName(noteNum) {
-	  // Keep shifting until the note is in the 0-12 range so we can return its
-	  // name. There is probably a way better way to do this with magic math.
-	  var shift;
-	  if (noteNum < 0) {
-	    shift = function (num) {
-	      return num + 12;
-	    };
-	  } else {
-	    shift = function (num) {
-	      return num - 12;
-	    };
-	  }
-	
-	  var name;
-	  while (true) {
-	    name = _libConstantsPiano.NOTE_NAMES[noteNum];
-	    if (typeof name !== 'undefined') {
-	      return name;
-	    }
-	    noteNum = shift(noteNum);
-	  }
-	}
-	
-	function chordName(chordData) {
-	  // Get the short name of a chord, like Cm7 for C minor 7.
-	  var note = noteName(chordData.chordRoot);
-	  return '' + note + chordData.chordType;
-	}
-	
-	function invertChord(inversion, notes) {
-	  var modifiedNotes = notes.slice();
-	  if (inversion !== 0) {
-	    for (var inv = 1; inv <= Math.abs(inversion); inv++) {
-	      modifiedNotes = applyChordInversion(inversion, modifiedNotes);
-	    }
-	  }
-	  return modifiedNotes;
-	}
-	
-	function applyChordInversion(inversion, notes) {
-	  var changedNote;
-	  var modifiedNotes = notes.slice();
-	  if (inversion > 0) {
-	    var first = modifiedNotes.shift();
-	    changedNote = first + 12;
-	    if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
-	      console.log('inversion out of bounds');
-	      return notes;
-	    }
-	    modifiedNotes.push(changedNote);
-	  } else {
-	    var last = modifiedNotes.pop();
-	    changedNote = last - 12;
-	    if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
-	      console.log('inversion out of bounds');
-	      return notes;
-	    }
-	    modifiedNotes.splice(0, 0, changedNote);
-	  }
-	  return modifiedNotes;
-	}
-
-/***/ },
-/* 187 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22188,7 +22391,7 @@
 	
 	var appActions = _interopRequireWildcard(_libActionsApp);
 	
-	var _libActionsControls = __webpack_require__(188);
+	var _libActionsControls = __webpack_require__(190);
 	
 	var controlActions = _interopRequireWildcard(_libActionsControls);
 	
@@ -22196,7 +22399,7 @@
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
 	
-	var _libConstantsPiano = __webpack_require__(183);
+	var _libConstantsChords = __webpack_require__(184);
 	
 	var Controls = (function (_Component) {
 	  _inherits(Controls, _Component);
@@ -22292,7 +22495,7 @@
 	    value: function render() {
 	      var _this2 = this;
 	
-	      var chordSelectOptions = _libConstantsPiano.CHORD_MAP_NAMES.map(function (chord) {
+	      var chordSelectOptions = _libConstantsChords.CHORD_MAP_NAMES.map(function (chord) {
 	        return _react2['default'].createElement(
 	          'option',
 	          { key: chord.key, value: chord.key },
@@ -22388,7 +22591,7 @@
 	exports['default'] = (0, _reactRedux.connect)(select)(Controls);
 
 /***/ },
-/* 188 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22460,7 +22663,7 @@
 	}
 
 /***/ },
-/* 189 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22483,7 +22686,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _libComponentsPianoKey = __webpack_require__(190);
+	var _libComponentsPianoKey = __webpack_require__(192);
 	
 	var _libComponentsPianoKey2 = _interopRequireDefault(_libComponentsPianoKey);
 	
@@ -22525,7 +22728,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22556,7 +22759,7 @@
 	
 	var _libActionsArrangement = __webpack_require__(182);
 	
-	var _libActionsPiano = __webpack_require__(191);
+	var _libActionsPiano = __webpack_require__(193);
 	
 	var pianoActions = _interopRequireWildcard(_libActionsPiano);
 	
@@ -22645,7 +22848,7 @@
 	exports['default'] = (0, _reactRedux.connect)(select)(PianoKey);
 
 /***/ },
-/* 191 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22692,7 +22895,7 @@
 	}
 
 /***/ },
-/* 192 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22715,7 +22918,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(195);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -22762,7 +22965,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 193 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -22817,7 +23020,7 @@
 
 
 /***/ },
-/* 194 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22840,7 +23043,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _classnames = __webpack_require__(193);
+	var _classnames = __webpack_require__(195);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -22945,7 +23148,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 195 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22959,7 +23162,7 @@
 	
 	var _redux = __webpack_require__(166);
 	
-	var _reduxThunk = __webpack_require__(196);
+	var _reduxThunk = __webpack_require__(198);
 	
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 	
@@ -22967,7 +23170,7 @@
 	
 	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
 	
-	var _reducers = __webpack_require__(197);
+	var _reducers = __webpack_require__(199);
 	
 	var _reducers2 = _interopRequireDefault(_reducers);
 	
@@ -23015,7 +23218,7 @@
 	exports['default'] = createReduxStore();
 
 /***/ },
-/* 196 */
+/* 198 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23037,7 +23240,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23050,15 +23253,15 @@
 	
 	var _redux = __webpack_require__(166);
 	
-	var _app = __webpack_require__(198);
+	var _app = __webpack_require__(200);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
-	var _controls = __webpack_require__(199);
+	var _controls = __webpack_require__(201);
 	
 	var _controls2 = _interopRequireDefault(_controls);
 	
-	var _arrangement = __webpack_require__(200);
+	var _arrangement = __webpack_require__(202);
 	
 	var _arrangement2 = _interopRequireDefault(_arrangement);
 	
@@ -23072,7 +23275,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 198 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23110,7 +23313,7 @@
 	}
 
 /***/ },
-/* 199 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23153,7 +23356,7 @@
 	}
 
 /***/ },
-/* 200 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23171,7 +23374,7 @@
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
 	
-	var _controls = __webpack_require__(199);
+	var _controls = __webpack_require__(201);
 	
 	var defaultChordRoot = -12; // C
 	

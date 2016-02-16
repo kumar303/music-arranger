@@ -1,29 +1,41 @@
-import {
-  NOTE_NAMES, PIANO_KEY_START, PIANO_KEY_END
-} from 'lib/constants/piano';
+import { MASTER_SCALE } from 'lib/constants/scales';
+import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
+
 
 
 export function noteName(noteNum) {
-  // Keep shifting until the note is in the 0-12 range so we can return its
+  // Keep shifting until the note is in the 0-11 range so we can return its
   // name. There is probably a way better way to do this with magic math.
+  var scaleLength = MASTER_SCALE.length;
   var shift;
+  var counter = 0;
+  var name;
+
+  if (isNaN(noteNum)) {
+    throw new Error(`noteNum must be a number; got ${noteNum}`);
+  }
+
   if (noteNum < 0) {
     shift = function(num) {
-      return num + 12;
+      return num + scaleLength;
     };
   } else {
     shift = function(num) {
-      return num - 12;
+      return num - scaleLength;
     };
   }
 
-  var name;
   while (true) {
-    name = NOTE_NAMES[noteNum];
+    name = MASTER_SCALE[noteNum];
     if (typeof name !== 'undefined') {
       return name;
     }
     noteNum = shift(noteNum);
+
+    if (counter > 30) {
+      throw new Error('too much recursion');
+    }
+    counter++;
   }
 }
 
