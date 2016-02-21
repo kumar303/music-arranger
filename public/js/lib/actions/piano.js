@@ -15,10 +15,6 @@ export function touchNote(note) {
       root: note,
       chordType: state.controls.chordType,
     }));
-    dispatch({
-      type: actionTypes.SET_CHORD_TYPE,
-      chordType: state.controls.chordType,
-    });
     stateStorage.saveState({
       dispatch: dispatch,
       state: getState(),
