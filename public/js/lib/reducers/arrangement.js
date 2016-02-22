@@ -1,4 +1,3 @@
-import { setChordNotes } from 'lib/actions/arrangement';
 import * as actionTypes from 'lib/constants/action-types';
 import { initialControlsState } from './controls';
 
@@ -13,10 +12,6 @@ export const initialArrangementState = {
   parts: [[{
     chordRoot: defaultChordRoot,
     chordType: initialControlsState.chordType,
-    chordNotes: setChordNotes({
-      root: defaultChordRoot,
-      chordType: initialControlsState.chordType,
-    }).chordNotes,
   }]],
 };
 
@@ -45,12 +40,6 @@ export default function arrangement(state, action) {
       return Object.assign({}, state, {
         parts: mergeNewPart(state, {
           chordType: action.chordType,
-        }),
-      });
-    case actionTypes.SET_CHORD_NOTES:
-      return Object.assign({}, state, {
-        parts: mergeNewPart(state, {
-          chordNotes: action.chordNotes,
         }),
       });
     case actionTypes.SET_CHORD_INVERSION:

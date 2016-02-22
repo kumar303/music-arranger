@@ -2,9 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getCurrentChordPart } from 'lib/actions/arrangement';
 import * as pianoActions from 'lib/actions/piano';
-import { invertChord } from 'lib/util/notes';
 
 const blackKeys = {
   1: 1,
@@ -16,12 +14,10 @@ const blackKeys = {
 
 
 export class PianoKey extends Component {
-  // TODO: should probably move a lot of this logic to <Piano> for speed.
 
   static propTypes = {
-    arrangement: PropTypes.object.isRequired,
-    controls: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
+    isSelected: PropTypes.bool.isRequired,
     note: PropTypes.number.isRequired,
   }
 
@@ -37,20 +33,10 @@ export class PianoKey extends Component {
     this.boundPianoActions.touchNote(this.props.note);
   }
 
-  isSelected(note) {
-    let chord = getCurrentChordPart(this.props.arrangement);
-    let chordNotes = [];
-    if (chord.chordNotes) {
-      chordNotes = invertChord(this.props.controls.chordInversion,
-                               chord.chordNotes);
-    }
-    return chordNotes.indexOf(note) !== -1;
-  }
-
   render() {
     var cls = 'key' + (this.blackKeyNum ?
                        ' black black' + this.blackKeyNum : '');
-    if (this.isSelected(this.props.note)) {
+    if (this.props.isSelected) {
       cls += ' pressed';
     }
     return (
@@ -60,11 +46,9 @@ export class PianoKey extends Component {
 }
 
 
-function select(state) {
-  return {
-    controls: state.controls,
-    arrangement: state.arrangement,
-  };
+// This only connects to Redux so it can get a dispatch() method.
+function select() {
+  return {};
 }
 
 export default connect(select)(PianoKey);

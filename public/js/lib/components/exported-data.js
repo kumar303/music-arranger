@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import cx from 'classnames';
 
+import { applyChordFormula } from 'lib/actions/arrangement';
 import { invertChord, noteName } from 'lib/util/notes';
 
 
@@ -39,8 +40,10 @@ export default class ExportedData extends Component {
           }
           return name;
         }
+        let chordNotes = applyChordFormula({root: data.chordRoot,
+                                            chordType: data.chordType});
         let partNotes = invertChord(data.chordInversion,
-                                    data.chordNotes);
+                                    chordNotes);
         return partNotes.map(getName).join(' ');
       }));
     });
