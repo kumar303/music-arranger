@@ -51,7 +51,6 @@ function dispatchCurrentChords(dispatch, state) {
   const position = part[posIndex] || {};
 
   let chordRoot = position.chordRoot;
-  let chordNotes = position.chordNotes;
 
   if (typeof chordRoot === 'undefined') {
     if (posIndex > 0 && part[posIndex - 1] === undefined) {
@@ -64,11 +63,6 @@ function dispatchCurrentChords(dispatch, state) {
     // this fills in a default chord just to indicate
     // that the action created a new part.
     chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
-    let chordNotesAction = setChordNotes({
-      root: chordRoot,
-      chordType: state.controls.chordType,
-    });
-    chordNotes = chordNotesAction.chordNotes;
   }
 
   let chordType = (position.chordType !== undefined ?
@@ -80,10 +74,6 @@ function dispatchCurrentChords(dispatch, state) {
   dispatch({
     type: actionTypes.TOUCH_NOTE,
     note: chordRoot,
-  });
-  dispatch({
-    type: actionTypes.SET_CHORD_NOTES,
-    chordNotes: chordNotes,
   });
   dispatch({
     type: actionTypes.SET_CHORD_TYPE,
@@ -116,7 +106,7 @@ export function setExportedData() {
 }
 
 
-function applyChordFormula(root, chordType) {
+export function applyChordFormula({root, chordType}) {
   // Given a root (anywhere on the keyboard), apply a chord formula
   // to return a list of all chord notes.
   let formula = CHORD_FORMULAS[chordType];
@@ -151,15 +141,6 @@ function applyChordFormula(root, chordType) {
     }
     return note;
   });
-}
-
-
-export function setChordNotes({root, chordType='M'}) {
-  let chordNotes = applyChordFormula(root, chordType);
-  return {
-    type: actionTypes.SET_CHORD_NOTES,
-    chordNotes: chordNotes,
-  };
 }
 
 

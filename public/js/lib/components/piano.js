@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { getCurrentChordPart } from 'lib/actions/arrangement';
+import { applyChordFormula,
+         getCurrentChordPart } from 'lib/actions/arrangement';
 import PianoKey from 'lib/components/piano-key';
 import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
 import { invertChord } from 'lib/util/notes';
 
-// TODO: maybe remove chordNotes from state and calculate it each time the piano is rendered.
 
 export class Piano extends Component {
 
@@ -35,11 +35,10 @@ export class Piano extends Component {
 
   render() {
     let chord = getCurrentChordPart(this.props.arrangement);
-    let chordNotes = [];
-    if (chord.chordNotes) {
-      chordNotes = invertChord(this.props.controls.chordInversion,
-                               chord.chordNotes);
-    }
+    let chordNotes = applyChordFormula({root: chord.chordRoot,
+                                        chordType: chord.chordType});
+    chordNotes = invertChord(this.props.controls.chordInversion,
+                             chordNotes);
     return (
       <div id="piano">
         <div className="keys">
