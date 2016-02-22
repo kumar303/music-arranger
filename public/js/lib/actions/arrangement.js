@@ -1,10 +1,7 @@
 import * as actionTypes from 'lib/constants/action-types';
 
 import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
-import { CHORD_FORMULAS } from 'lib/constants/chords';
-import { MASTER_SCALE_MAP, SCALES } from 'lib/constants/scales';
 import stateStorage from 'lib/util/state-storage';
-import { noteName } from 'lib/util/notes';
 
 
 export function setCurrentPart(partNum) {
@@ -103,44 +100,6 @@ export function setExportedData() {
       }),
     });
   };
-}
-
-
-export function applyChordFormula({root, chordType}) {
-  // Given a root (anywhere on the keyboard), apply a chord formula
-  // to return a list of all chord notes.
-  let formula = CHORD_FORMULAS[chordType];
-  if (formula === undefined) {
-    throw new Error(`unknown chordType: ${chordType} (or undefined formula)`);
-  }
-
-  let rootName = noteName(root);
-  let rootOffset = MASTER_SCALE_MAP[rootName];
-  // Get all the notes in this root's scale.
-  let scaleNotes = SCALES[rootName].notes;
-
-  return formula.map((pos) => {
-    let modifier;
-    if (pos.modifier) {
-      // Prepare to apply a modifier, such as flat() or sharp()
-      // which would adjust the note number.
-      modifier = pos.modifier;
-      pos = pos.position;
-    }
-    let noteInPosition = scaleNotes[pos - 1];
-    if (noteInPosition === undefined) {
-      throw new Error(
-        `Position ${pos} missing from scale ${rootName}, ${chordType}`);
-    }
-    // Apply the scale position for this part of the chord.
-    // Also adjust the positions based on where the tonic of the scale
-    // starts. For example, D needs to move back -1 numbers.
-    let note = root + noteInPosition - rootOffset;
-    if (modifier) {
-      note = modifier(note);
-    }
-    return note;
-  });
 }
 
 
