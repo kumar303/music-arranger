@@ -20851,7 +20851,7 @@
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
 	
-	var _libComponentsArrangement = __webpack_require__(187);
+	var _libComponentsArrangement = __webpack_require__(184);
 	
 	var _libComponentsArrangement2 = _interopRequireDefault(_libComponentsArrangement);
 	
@@ -20993,8 +20993,6 @@
 	exports.RESTORE_STATE = RESTORE_STATE;
 	var SET_CHORD_INVERSION = 'SET_CHORD_INVERSION';
 	exports.SET_CHORD_INVERSION = SET_CHORD_INVERSION;
-	var SET_CHORD_NOTES = 'SET_CHORD_NOTES';
-	exports.SET_CHORD_NOTES = SET_CHORD_NOTES;
 	var SET_CHORD_TYPE = 'SET_CHORD_TYPE';
 	exports.SET_CHORD_TYPE = SET_CHORD_TYPE;
 	var SET_CURRENT_PART = 'SET_CURRENT_PART';
@@ -21681,7 +21679,6 @@
 	exports.setPosition = setPosition;
 	exports.clearExportedData = clearExportedData;
 	exports.setExportedData = setExportedData;
-	exports.setChordNotes = setChordNotes;
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -21693,15 +21690,9 @@
 	
 	var _libConstantsPiano = __webpack_require__(183);
 	
-	var _libConstantsChords = __webpack_require__(184);
-	
-	var _libConstantsScales = __webpack_require__(185);
-	
 	var _libUtilStateStorage = __webpack_require__(180);
 	
 	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
-	
-	var _libUtilNotes = __webpack_require__(186);
 	
 	function setCurrentPart(partNum) {
 	  return function (dispatch, getState) {
@@ -21748,7 +21739,6 @@
 	  var position = part[posIndex] || {};
 	
 	  var chordRoot = position.chordRoot;
-	  var chordNotes = position.chordNotes;
 	
 	  if (typeof chordRoot === 'undefined') {
 	    if (posIndex > 0 && part[posIndex - 1] === undefined) {
@@ -21761,11 +21751,6 @@
 	    // this fills in a default chord just to indicate
 	    // that the action created a new part.
 	    chordRoot = _defaultChordRoot(part[arrangement.currentPosition - 1]);
-	    var chordNotesAction = setChordNotes({
-	      root: chordRoot,
-	      chordType: state.controls.chordType
-	    });
-	    chordNotes = chordNotesAction.chordNotes;
 	  }
 	
 	  var chordType = position.chordType !== undefined ? position.chordType : state.controls.chordType;
@@ -21774,10 +21759,6 @@
 	  dispatch({
 	    type: actionTypes.TOUCH_NOTE,
 	    note: chordRoot
-	  });
-	  dispatch({
-	    type: actionTypes.SET_CHORD_NOTES,
-	    chordNotes: chordNotes
 	  });
 	  dispatch({
 	    type: actionTypes.SET_CHORD_TYPE,
@@ -21804,54 +21785,6 @@
 	        parts: state.arrangement.parts
 	      })
 	    });
-	  };
-	}
-	
-	function applyChordFormula(root, chordType) {
-	  // Given a root (anywhere on the keyboard), apply a chord formula
-	  // to return a list of all chord notes.
-	  var formula = _libConstantsChords.CHORD_FORMULAS[chordType];
-	  if (formula === undefined) {
-	    throw new Error('unknown chordType: ' + chordType + ' (or undefined formula)');
-	  }
-	
-	  var rootName = (0, _libUtilNotes.noteName)(root);
-	  var rootOffset = _libConstantsScales.MASTER_SCALE_MAP[rootName];
-	  // Get all the notes in this root's scale.
-	  var scaleNotes = _libConstantsScales.SCALES[rootName].notes;
-	
-	  return formula.map(function (pos) {
-	    var modifier = undefined;
-	    if (pos.modifier) {
-	      // Prepare to apply a modifier, such as flat() or sharp()
-	      // which would adjust the note number.
-	      modifier = pos.modifier;
-	      pos = pos.position;
-	    }
-	    var noteInPosition = scaleNotes[pos - 1];
-	    if (noteInPosition === undefined) {
-	      throw new Error('Position ' + pos + ' missing from scale ' + rootName + ', ' + chordType);
-	    }
-	    // Apply the scale position for this part of the chord.
-	    // Also adjust the positions based on where the tonic of the scale
-	    // starts. For example, D needs to move back -1 numbers.
-	    var note = root + noteInPosition - rootOffset;
-	    if (modifier) {
-	      note = modifier(note);
-	    }
-	    return note;
-	  });
-	}
-	
-	function setChordNotes(_ref2) {
-	  var root = _ref2.root;
-	  var _ref2$chordType = _ref2.chordType;
-	  var chordType = _ref2$chordType === undefined ? 'M' : _ref2$chordType;
-	
-	  var chordNotes = applyChordFormula(root, chordType);
-	  return {
-	    type: actionTypes.SET_CHORD_NOTES,
-	    chordNotes: chordNotes
 	  };
 	}
 	
@@ -21882,6 +21815,340 @@
 
 /***/ },
 /* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(159);
+	
+	var _redux = __webpack_require__(166);
+	
+	var _libActionsArrangement = __webpack_require__(182);
+	
+	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
+	
+	var _libComponentsArrangementPart = __webpack_require__(185);
+	
+	var _libComponentsArrangementPart2 = _interopRequireDefault(_libComponentsArrangementPart);
+	
+	var Arrangement = (function (_Component) {
+	  _inherits(Arrangement, _Component);
+	
+	  _createClass(Arrangement, null, [{
+	    key: 'propTypes',
+	    value: {
+	      arrangement: _react.PropTypes.object.isRequired,
+	      dispatch: _react.PropTypes.func.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  function Arrangement(props) {
+	    _classCallCheck(this, Arrangement);
+	
+	    _get(Object.getPrototypeOf(Arrangement.prototype), 'constructor', this).call(this, props);
+	    this.boundArrangement = (0, _redux.bindActionCreators)(arrangementActions, props.dispatch);
+	  }
+	
+	  _createClass(Arrangement, [{
+	    key: 'renderParts',
+	    value: function renderParts() {
+	      var parts = [];
+	      var partLength = this.props.arrangement.parts.length;
+	      for (var partNum = 0; partNum < partLength + 1; partNum++) {
+	        parts.push(_react2['default'].createElement(_libComponentsArrangementPart2['default'], {
+	          currentPart: this.props.arrangement.currentPart,
+	          currentPosition: this.props.arrangement.currentPosition,
+	          key: partNum,
+	          part: this.props.arrangement.parts[partNum] || [],
+	          partNum: partNum,
+	          setPosition: this.boundArrangement.setPosition }));
+	      }
+	      return parts;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        this.renderParts()
+	      );
+	    }
+	  }]);
+	
+	  return Arrangement;
+	})(_react.Component);
+	
+	exports.Arrangement = Arrangement;
+	
+	function select(state) {
+	  return {
+	    arrangement: state.arrangement
+	  };
+	}
+	
+	exports['default'] = (0, _reactRedux.connect)(select)(Arrangement);
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _libUtilNotes = __webpack_require__(186);
+	
+	var ArrangementPart = (function (_Component) {
+	  _inherits(ArrangementPart, _Component);
+	
+	  function ArrangementPart() {
+	    _classCallCheck(this, ArrangementPart);
+	
+	    _get(Object.getPrototypeOf(ArrangementPart.prototype), 'constructor', this).apply(this, arguments);
+	  }
+	
+	  _createClass(ArrangementPart, [{
+	    key: 'setPosition',
+	    value: function setPosition(event, position) {
+	      event.preventDefault();
+	      this.props.setPosition(this.props.partNum, position);
+	    }
+	  }, {
+	    key: 'renderChords',
+	    value: function renderChords() {
+	      var _this = this;
+	
+	      var empty = _react2['default'].createElement(
+	        'span',
+	        null,
+	        ' '
+	      );
+	      var chords = [];
+	
+	      var _loop = function (position) {
+	        var chordData = _this.props.part[position] || {};
+	        var cls = _this.props.currentPart === _this.props.partNum && _this.props.currentPosition === position ? 'active' : '';
+	        chords.push(_react2['default'].createElement(
+	          'a',
+	          { onClick: function (e) {
+	              return _this.setPosition(e, position);
+	            },
+	            href: '#', key: position, className: cls },
+	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.chordName)(chordData) : empty
+	        ));
+	      };
+	
+	      for (var position = 0; position < 9; position++) {
+	        _loop(position);
+	      }
+	      return chords;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'arrangement' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'elements' },
+	          this.renderChords()
+	        ),
+	        _react2['default'].createElement('div', { className: 'clear' })
+	      );
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    value: {
+	      currentPart: _react.PropTypes.number.isRequired,
+	      currentPosition: _react.PropTypes.number.isRequired,
+	      part: _react.PropTypes.array.isRequired,
+	      partNum: _react.PropTypes.number.isRequired,
+	      setPosition: _react.PropTypes.func.isRequired
+	    },
+	    enumerable: true
+	  }]);
+	
+	  return ArrangementPart;
+	})(_react.Component);
+	
+	exports['default'] = ArrangementPart;
+	module.exports = exports['default'];
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.noteName = noteName;
+	exports.chordName = chordName;
+	exports.invertChord = invertChord;
+	exports.applyChordFormula = applyChordFormula;
+	
+	var _libConstantsChords = __webpack_require__(187);
+	
+	var _libConstantsScales = __webpack_require__(188);
+	
+	var _libConstantsPiano = __webpack_require__(183);
+	
+	function noteName(noteNum) {
+	  // Keep shifting until the note is in the 0-11 range so we can return its
+	  // name. There is probably a way better way to do this with magic math.
+	  var scaleLength = _libConstantsScales.MASTER_SCALE.length;
+	  var shift;
+	  var counter = 0;
+	  var name;
+	
+	  if (isNaN(noteNum)) {
+	    throw new Error('noteNum must be a number; got ' + noteNum);
+	  }
+	
+	  if (noteNum < 0) {
+	    shift = function (num) {
+	      return num + scaleLength;
+	    };
+	  } else {
+	    shift = function (num) {
+	      return num - scaleLength;
+	    };
+	  }
+	
+	  while (true) {
+	    name = _libConstantsScales.MASTER_SCALE[noteNum];
+	    if (typeof name !== 'undefined') {
+	      return name;
+	    }
+	    noteNum = shift(noteNum);
+	
+	    if (counter > 30) {
+	      throw new Error('too much recursion');
+	    }
+	    counter++;
+	  }
+	}
+	
+	function chordName(chordData) {
+	  // Get the short name of a chord, like Cm7 for C minor 7.
+	  var note = noteName(chordData.chordRoot);
+	  return '' + note + chordData.chordType;
+	}
+	
+	function invertChord(inversion, notes) {
+	  var modifiedNotes = notes.slice();
+	  if (inversion !== 0) {
+	    for (var inv = 1; inv <= Math.abs(inversion); inv++) {
+	      modifiedNotes = applyChordInversion(inversion, modifiedNotes);
+	    }
+	  }
+	  return modifiedNotes;
+	}
+	
+	function applyChordFormula(_ref) {
+	  var root = _ref.root;
+	  var chordType = _ref.chordType;
+	
+	  // Given a root (anywhere on the keyboard), apply a chord formula
+	  // to return a list of all chord notes.
+	  var formula = _libConstantsChords.CHORD_FORMULAS[chordType];
+	  if (formula === undefined) {
+	    throw new Error('unknown chordType: ' + chordType + ' (or undefined formula)');
+	  }
+	
+	  var rootName = noteName(root);
+	  var rootOffset = _libConstantsScales.MASTER_SCALE_MAP[rootName];
+	  // Get all the notes in this root's scale.
+	  var scaleNotes = _libConstantsScales.SCALES[rootName].notes;
+	
+	  return formula.map(function (pos) {
+	    var modifier = undefined;
+	    if (pos.modifier) {
+	      // Prepare to apply a modifier, such as flat() or sharp()
+	      // which would adjust the note number.
+	      modifier = pos.modifier;
+	      pos = pos.position;
+	    }
+	    var noteInPosition = scaleNotes[pos - 1];
+	    if (noteInPosition === undefined) {
+	      throw new Error('Position ' + pos + ' missing from scale ' + rootName + ', ' + chordType);
+	    }
+	    // Apply the scale position for this part of the chord.
+	    // Also adjust the positions based on where the tonic of the scale
+	    // starts. For example, D needs to move back -1 numbers.
+	    var note = root + noteInPosition - rootOffset;
+	    if (modifier) {
+	      note = modifier(note);
+	    }
+	    return note;
+	  });
+	}
+	
+	function applyChordInversion(inversion, notes) {
+	  var changedNote;
+	  var modifiedNotes = notes.slice();
+	  if (inversion > 0) {
+	    var first = modifiedNotes.shift();
+	    changedNote = first + 12;
+	    if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
+	      console.log('inversion out of bounds');
+	      return notes;
+	    }
+	    modifiedNotes.push(changedNote);
+	  } else {
+	    var last = modifiedNotes.pop();
+	    changedNote = last - 12;
+	    if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
+	      console.log('inversion out of bounds');
+	      return notes;
+	    }
+	    modifiedNotes.splice(0, 0, changedNote);
+	  }
+	  return modifiedNotes;
+	}
+
+/***/ },
+/* 187 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21937,7 +22204,7 @@
 	});
 
 /***/ },
-/* 185 */
+/* 188 */
 /***/ function(module, exports) {
 
 	
@@ -22066,298 +22333,6 @@
 	}
 
 /***/ },
-/* 186 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.noteName = noteName;
-	exports.chordName = chordName;
-	exports.invertChord = invertChord;
-	
-	var _libConstantsScales = __webpack_require__(185);
-	
-	var _libConstantsPiano = __webpack_require__(183);
-	
-	function noteName(noteNum) {
-	  // Keep shifting until the note is in the 0-11 range so we can return its
-	  // name. There is probably a way better way to do this with magic math.
-	  var scaleLength = _libConstantsScales.MASTER_SCALE.length;
-	  var shift;
-	  var counter = 0;
-	  var name;
-	
-	  if (isNaN(noteNum)) {
-	    throw new Error('noteNum must be a number; got ' + noteNum);
-	  }
-	
-	  if (noteNum < 0) {
-	    shift = function (num) {
-	      return num + scaleLength;
-	    };
-	  } else {
-	    shift = function (num) {
-	      return num - scaleLength;
-	    };
-	  }
-	
-	  while (true) {
-	    name = _libConstantsScales.MASTER_SCALE[noteNum];
-	    if (typeof name !== 'undefined') {
-	      return name;
-	    }
-	    noteNum = shift(noteNum);
-	
-	    if (counter > 30) {
-	      throw new Error('too much recursion');
-	    }
-	    counter++;
-	  }
-	}
-	
-	function chordName(chordData) {
-	  // Get the short name of a chord, like Cm7 for C minor 7.
-	  var note = noteName(chordData.chordRoot);
-	  return '' + note + chordData.chordType;
-	}
-	
-	function invertChord(inversion, notes) {
-	  var modifiedNotes = notes.slice();
-	  if (inversion !== 0) {
-	    for (var inv = 1; inv <= Math.abs(inversion); inv++) {
-	      modifiedNotes = applyChordInversion(inversion, modifiedNotes);
-	    }
-	  }
-	  return modifiedNotes;
-	}
-	
-	function applyChordInversion(inversion, notes) {
-	  var changedNote;
-	  var modifiedNotes = notes.slice();
-	  if (inversion > 0) {
-	    var first = modifiedNotes.shift();
-	    changedNote = first + 12;
-	    if (changedNote > _libConstantsPiano.PIANO_KEY_END) {
-	      console.log('inversion out of bounds');
-	      return notes;
-	    }
-	    modifiedNotes.push(changedNote);
-	  } else {
-	    var last = modifiedNotes.pop();
-	    changedNote = last - 12;
-	    if (changedNote < _libConstantsPiano.PIANO_KEY_START) {
-	      console.log('inversion out of bounds');
-	      return notes;
-	    }
-	    modifiedNotes.splice(0, 0, changedNote);
-	  }
-	  return modifiedNotes;
-	}
-
-/***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRedux = __webpack_require__(159);
-	
-	var _redux = __webpack_require__(166);
-	
-	var _libActionsArrangement = __webpack_require__(182);
-	
-	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
-	
-	var _libComponentsArrangementPart = __webpack_require__(188);
-	
-	var _libComponentsArrangementPart2 = _interopRequireDefault(_libComponentsArrangementPart);
-	
-	var Arrangement = (function (_Component) {
-	  _inherits(Arrangement, _Component);
-	
-	  _createClass(Arrangement, null, [{
-	    key: 'propTypes',
-	    value: {
-	      arrangement: _react.PropTypes.object.isRequired,
-	      dispatch: _react.PropTypes.func.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  function Arrangement(props) {
-	    _classCallCheck(this, Arrangement);
-	
-	    _get(Object.getPrototypeOf(Arrangement.prototype), 'constructor', this).call(this, props);
-	    this.boundArrangement = (0, _redux.bindActionCreators)(arrangementActions, props.dispatch);
-	  }
-	
-	  _createClass(Arrangement, [{
-	    key: 'renderParts',
-	    value: function renderParts() {
-	      var parts = [];
-	      var partLength = this.props.arrangement.parts.length;
-	      for (var partNum = 0; partNum < partLength + 1; partNum++) {
-	        parts.push(_react2['default'].createElement(_libComponentsArrangementPart2['default'], {
-	          currentPart: this.props.arrangement.currentPart,
-	          currentPosition: this.props.arrangement.currentPosition,
-	          key: partNum,
-	          part: this.props.arrangement.parts[partNum] || [],
-	          partNum: partNum,
-	          setPosition: this.boundArrangement.setPosition }));
-	      }
-	      return parts;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        null,
-	        this.renderParts()
-	      );
-	    }
-	  }]);
-	
-	  return Arrangement;
-	})(_react.Component);
-	
-	exports.Arrangement = Arrangement;
-	
-	function select(state) {
-	  return {
-	    arrangement: state.arrangement
-	  };
-	}
-	
-	exports['default'] = (0, _reactRedux.connect)(select)(Arrangement);
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _libUtilNotes = __webpack_require__(186);
-	
-	var ArrangementPart = (function (_Component) {
-	  _inherits(ArrangementPart, _Component);
-	
-	  function ArrangementPart() {
-	    _classCallCheck(this, ArrangementPart);
-	
-	    _get(Object.getPrototypeOf(ArrangementPart.prototype), 'constructor', this).apply(this, arguments);
-	  }
-	
-	  _createClass(ArrangementPart, [{
-	    key: 'setPosition',
-	    value: function setPosition(event, position) {
-	      event.preventDefault();
-	      this.props.setPosition(this.props.partNum, position);
-	    }
-	  }, {
-	    key: 'renderChords',
-	    value: function renderChords() {
-	      var _this = this;
-	
-	      var empty = _react2['default'].createElement(
-	        'span',
-	        null,
-	        ' '
-	      );
-	      var chords = [];
-	
-	      var _loop = function (position) {
-	        var chordData = _this.props.part[position] || {};
-	        var cls = _this.props.currentPart === _this.props.partNum && _this.props.currentPosition === position ? 'active' : '';
-	        chords.push(_react2['default'].createElement(
-	          'a',
-	          { onClick: function (e) {
-	              return _this.setPosition(e, position);
-	            },
-	            href: '#', key: position, className: cls },
-	          typeof chordData.chordRoot !== 'undefined' ? (0, _libUtilNotes.chordName)(chordData) : empty
-	        ));
-	      };
-	
-	      for (var position = 0; position < 9; position++) {
-	        _loop(position);
-	      }
-	      return chords;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: 'arrangement' },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'elements' },
-	          this.renderChords()
-	        ),
-	        _react2['default'].createElement('div', { className: 'clear' })
-	      );
-	    }
-	  }], [{
-	    key: 'propTypes',
-	    value: {
-	      currentPart: _react.PropTypes.number.isRequired,
-	      currentPosition: _react.PropTypes.number.isRequired,
-	      part: _react.PropTypes.array.isRequired,
-	      partNum: _react.PropTypes.number.isRequired,
-	      setPosition: _react.PropTypes.func.isRequired
-	    },
-	    enumerable: true
-	  }]);
-	
-	  return ArrangementPart;
-	})(_react.Component);
-	
-	exports['default'] = ArrangementPart;
-	module.exports = exports['default'];
-
-/***/ },
 /* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -22399,7 +22374,7 @@
 	
 	var arrangementActions = _interopRequireWildcard(_libActionsArrangement);
 	
-	var _libConstantsChords = __webpack_require__(184);
+	var _libConstantsChords = __webpack_require__(187);
 	
 	var Controls = (function (_Component) {
 	  _inherits(Controls, _Component);
@@ -22615,19 +22590,12 @@
 	
 	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
 	
-	var _arrangement = __webpack_require__(182);
-	
 	function setChordType(chordType) {
 	  return function (dispatch, getState) {
-	    var state = getState();
 	    dispatch({
 	      type: actionTypes.SET_CHORD_TYPE,
 	      chordType: chordType
 	    });
-	    dispatch((0, _arrangement.setChordNotes)({
-	      root: (0, _arrangement.getCurrentChordPart)(state.arrangement).chordRoot,
-	      chordType: chordType
-	    }));
 	    _libUtilStateStorage2['default'].saveState({
 	      dispatch: dispatch,
 	      state: getState()
@@ -22672,6 +22640,8 @@
 	  value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -22686,14 +22656,30 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactRedux = __webpack_require__(159);
+	
+	var _libActionsArrangement = __webpack_require__(182);
+	
 	var _libComponentsPianoKey = __webpack_require__(192);
 	
 	var _libComponentsPianoKey2 = _interopRequireDefault(_libComponentsPianoKey);
 	
 	var _libConstantsPiano = __webpack_require__(183);
 	
+	var _libUtilNotes = __webpack_require__(186);
+	
 	var Piano = (function (_Component) {
 	  _inherits(Piano, _Component);
+	
+	  _createClass(Piano, null, [{
+	    key: 'propTypes',
+	    value: {
+	      arrangement: _react.PropTypes.object.isRequired,
+	      controls: _react.PropTypes.object.isRequired,
+	      dispatch: _react.PropTypes.func.isRequired
+	    },
+	    enumerable: true
+	  }]);
 	
 	  function Piano(props) {
 	    _classCallCheck(this, Piano);
@@ -22706,15 +22692,33 @@
 	  }
 	
 	  _createClass(Piano, [{
+	    key: 'prepareKey',
+	    value: function prepareKey(chordNotes, key) {
+	      // TODO: we could maybe detect whether or not the key changed here.
+	      // If not, it would probably be faster to return the old key object
+	      // instead of returning a new one each time.
+	      var props = Object.assign({}, key.props);
+	      props.isSelected = chordNotes.indexOf(props.note) !== -1;
+	      return _react2['default'].createElement(_libComponentsPianoKey2['default'], _extends({ key: props.note }, props));
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this = this;
+	
+	      var chord = (0, _libActionsArrangement.getCurrentChordPart)(this.props.arrangement);
+	      var chordNotes = (0, _libActionsArrangement.applyChordFormula)({ root: chord.chordRoot,
+	        chordType: chord.chordType });
+	      chordNotes = (0, _libUtilNotes.invertChord)(this.props.controls.chordInversion, chordNotes);
 	      return _react2['default'].createElement(
 	        'div',
 	        { id: 'piano' },
 	        _react2['default'].createElement(
 	          'div',
 	          { className: 'keys' },
-	          this.keys
+	          this.keys.map(function (key) {
+	            return _this.prepareKey(chordNotes, key);
+	          })
 	        ),
 	        _react2['default'].createElement('div', { className: 'clear' })
 	      );
@@ -22724,8 +22728,16 @@
 	  return Piano;
 	})(_react.Component);
 	
-	exports['default'] = Piano;
-	module.exports = exports['default'];
+	exports.Piano = Piano;
+	
+	function select(state) {
+	  return {
+	    controls: state.controls,
+	    arrangement: state.arrangement
+	  };
+	}
+	
+	exports['default'] = (0, _reactRedux.connect)(select)(Piano);
 
 /***/ },
 /* 192 */
@@ -22757,13 +22769,9 @@
 	
 	var _redux = __webpack_require__(166);
 	
-	var _libActionsArrangement = __webpack_require__(182);
-	
 	var _libActionsPiano = __webpack_require__(193);
 	
 	var pianoActions = _interopRequireWildcard(_libActionsPiano);
-	
-	var _libUtilNotes = __webpack_require__(186);
 	
 	var blackKeys = {
 	  1: 1,
@@ -22778,13 +22786,9 @@
 	
 	  _createClass(PianoKey, null, [{
 	    key: 'propTypes',
-	
-	    // TODO: should probably move a lot of this logic to <Piano> for speed.
-	
 	    value: {
-	      arrangement: _react.PropTypes.object.isRequired,
-	      controls: _react.PropTypes.object.isRequired,
 	      dispatch: _react.PropTypes.func.isRequired,
+	      isSelected: _react.PropTypes.bool.isRequired,
 	      note: _react.PropTypes.number.isRequired
 	    },
 	    enumerable: true
@@ -22798,6 +22802,8 @@
 	    this.boundPianoActions = (0, _redux.bindActionCreators)(pianoActions, props.dispatch);
 	  }
 	
+	  // This only connects to Redux so it can get a dispatch() method.
+	
 	  _createClass(PianoKey, [{
 	    key: 'onClick',
 	    value: function onClick(event) {
@@ -22805,22 +22811,12 @@
 	      this.boundPianoActions.touchNote(this.props.note);
 	    }
 	  }, {
-	    key: 'isSelected',
-	    value: function isSelected(note) {
-	      var chord = (0, _libActionsArrangement.getCurrentChordPart)(this.props.arrangement);
-	      var chordNotes = [];
-	      if (chord.chordNotes) {
-	        chordNotes = (0, _libUtilNotes.invertChord)(this.props.controls.chordInversion, chord.chordNotes);
-	      }
-	      return chordNotes.indexOf(note) !== -1;
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _this = this;
 	
 	      var cls = 'key' + (this.blackKeyNum ? ' black black' + this.blackKeyNum : '');
-	      if (this.isSelected(this.props.note)) {
+	      if (this.props.isSelected) {
 	        cls += ' pressed';
 	      }
 	      return _react2['default'].createElement('div', { onClick: function () {
@@ -22837,12 +22833,8 @@
 	})(_react.Component);
 	
 	exports.PianoKey = PianoKey;
-	
-	function select(state) {
-	  return {
-	    controls: state.controls,
-	    arrangement: state.arrangement
-	  };
+	function select() {
+	  return {};
 	}
 	
 	exports['default'] = (0, _reactRedux.connect)(select)(PianoKey);
@@ -22870,22 +22862,11 @@
 	
 	var _libUtilStateStorage2 = _interopRequireDefault(_libUtilStateStorage);
 	
-	var _arrangement = __webpack_require__(182);
-	
 	function touchNote(note) {
 	  return function (dispatch, getState) {
-	    var state = getState();
 	    dispatch({
 	      type: actionTypes.TOUCH_NOTE,
 	      note: note
-	    });
-	    dispatch((0, _arrangement.setChordNotes)({
-	      root: note,
-	      chordType: state.controls.chordType
-	    }));
-	    dispatch({
-	      type: actionTypes.SET_CHORD_TYPE,
-	      chordType: state.controls.chordType
 	    });
 	    _libUtilStateStorage2['default'].saveState({
 	      dispatch: dispatch,
@@ -23047,6 +23028,8 @@
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
+	var _libActionsArrangement = __webpack_require__(182);
+	
 	var _libUtilNotes = __webpack_require__(186);
 	
 	var ExportedData = (function (_Component) {
@@ -23091,7 +23074,9 @@
 	            }
 	            return name;
 	          }
-	          var partNotes = (0, _libUtilNotes.invertChord)(data.chordInversion, data.chordNotes);
+	          var chordNotes = (0, _libActionsArrangement.applyChordFormula)({ root: data.chordRoot,
+	            chordType: data.chordType });
+	          var partNotes = (0, _libUtilNotes.invertChord)(data.chordInversion, chordNotes);
 	          return partNotes.map(getName).join(' ');
 	        }));
 	      });
@@ -23368,8 +23353,6 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _libActionsArrangement = __webpack_require__(182);
-	
 	var _libConstantsActionTypes = __webpack_require__(179);
 	
 	var actionTypes = _interopRequireWildcard(_libConstantsActionTypes);
@@ -23386,11 +23369,7 @@
 	  // Each part contains one or more chords.
 	  parts: [[{
 	    chordRoot: defaultChordRoot,
-	    chordType: _controls.initialControlsState.chordType,
-	    chordNotes: (0, _libActionsArrangement.setChordNotes)({
-	      root: defaultChordRoot,
-	      chordType: _controls.initialControlsState.chordType
-	    }).chordNotes
+	    chordType: _controls.initialControlsState.chordType
 	  }]]
 	};
 	
@@ -23420,12 +23399,6 @@
 	      return Object.assign({}, state, {
 	        parts: mergeNewPart(state, {
 	          chordType: action.chordType
-	        })
-	      });
-	    case actionTypes.SET_CHORD_NOTES:
-	      return Object.assign({}, state, {
-	        parts: mergeNewPart(state, {
-	          chordNotes: action.chordNotes
 	        })
 	      });
 	    case actionTypes.SET_CHORD_INVERSION:
