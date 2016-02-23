@@ -22707,7 +22707,7 @@
 	      var _this = this;
 	
 	      var chord = (0, _libActionsArrangement.getCurrentChordPart)(this.props.arrangement);
-	      var chordNotes = (0, _libActionsArrangement.applyChordFormula)({ root: chord.chordRoot,
+	      var chordNotes = (0, _libUtilNotes.applyChordFormula)({ root: chord.chordRoot,
 	        chordType: chord.chordType });
 	      chordNotes = (0, _libUtilNotes.invertChord)(this.props.controls.chordInversion, chordNotes);
 	      return _react2['default'].createElement(
@@ -23028,8 +23028,6 @@
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
-	var _libActionsArrangement = __webpack_require__(182);
-	
 	var _libUtilNotes = __webpack_require__(186);
 	
 	var ExportedData = (function (_Component) {
@@ -23074,7 +23072,7 @@
 	            }
 	            return name;
 	          }
-	          var chordNotes = (0, _libActionsArrangement.applyChordFormula)({ root: data.chordRoot,
+	          var chordNotes = (0, _libUtilNotes.applyChordFormula)({ root: data.chordRoot,
 	            chordType: data.chordType });
 	          var partNotes = (0, _libUtilNotes.invertChord)(data.chordInversion, chordNotes);
 	          return partNotes.map(getName).join(' ');

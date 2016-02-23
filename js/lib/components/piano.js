@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { applyChordFormula,
-         getCurrentChordPart } from 'lib/actions/arrangement';
+import { getCurrentChordPart } from 'lib/actions/arrangement';
 import PianoKey from 'lib/components/piano-key';
 import { PIANO_KEY_START, PIANO_KEY_END } from 'lib/constants/piano';
-import { invertChord } from 'lib/util/notes';
+import { applyChordFormula, invertChord } from 'lib/util/notes';
 
 
 export class Piano extends Component {
