@@ -23030,6 +23030,8 @@
 	
 	var _libUtilNotes = __webpack_require__(186);
 	
+	var alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+	
 	var ExportedData = (function (_Component) {
 	  _inherits(ExportedData, _Component);
 	
@@ -23043,10 +23045,13 @@
 	    key: 'formatChords',
 	    value: function formatChords(part, index, formatter) {
 	      var chords = [];
+	      // FIXME: this will go out of range if some weirdo puts more than 26
+	      // sections in their song.
+	      var section = alphabet[index];
 	      part.forEach(function (data) {
 	        chords.push(formatter(data));
 	      });
-	      return index + 1 + '. ' + chords.join(' >>> ');
+	      return section + ': ' + chords.join(' >>> ');
 	    }
 	  }, {
 	    key: 'formatData',
