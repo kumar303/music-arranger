@@ -3,6 +3,10 @@ import cx from 'classnames';
 
 import { applyChordFormula, invertChord, noteName } from 'lib/util/notes';
 
+const alphabet = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+  'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
 
 export default class ExportedData extends Component {
 
@@ -13,10 +17,13 @@ export default class ExportedData extends Component {
 
   formatChords(part, index, formatter) {
     var chords = [];
+    // FIXME: this will go out of range if some weirdo puts more than 26
+    // sections in their song.
+    var section = alphabet[index];
     part.forEach((data) => {
       chords.push(formatter(data));
     });
-    return (index + 1) + '. ' + chords.join(' >>> ');
+    return `${section}: ${chords.join(' >>> ')}`;
   }
 
   formatData() {
