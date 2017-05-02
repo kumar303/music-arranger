@@ -8,6 +8,8 @@ which are made up of only a few repeating chords and maybe some turn-arounds.
 
 # Launching the App
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kumar303/music-arranger.svg)](https://greenkeeper.io/)
+
 You can use the app in your web browser from
 [kumar303.github.io/music-arranger/](http://kumar303.github.io/music-arranger/).
 
